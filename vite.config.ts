@@ -13,6 +13,16 @@ export default defineConfig({
   ssr: {
     noExternal: ["pdfjs-dist"]
   },
+  define: {
+    // Fix Cloudflare Workers environment issues
+    "process.env.NODE_ENV": JSON.stringify("production"),
+  },
+  build: {
+    minify: "esbuild",
+    rollupOptions: {
+      external: [],
+    },
+  },
   plugins: [
     tsconfigPaths(),
     tanstackStart({

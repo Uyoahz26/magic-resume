@@ -5,3 +5,41 @@ compatibility_flags = ["nodejs_compat"]
 
 [assets]
 directory = "dist/client"
+
+# =========================
+# Cloudflare D1 (结构化数据)
+# =========================
+# 首次部署:
+#   wrangler d1 create magic-resume
+#   把返回的 database_id 填到下方 binding.database_id
+[[d1_databases]]
+binding = "DB"
+database_name = "magic-resume"
+database_id = "9eda4848-8ce7-47ec-a972-8ae950ee77ce"
+migrations_dir = "migrations"
+
+# =========================
+# Vars (非敏感配置)
+# =========================
+[vars]
+# DeepSeek
+DEEPSEEK_MODEL = "deepseek-chat"
+
+# 腾讯云 COS
+TENCENT_COS_REGION = "ap-chengdu"
+TENCENT_COS_BUCKET = "homebug-1258635493"
+TENCENT_COS_SCHEME = "https"
+
+# AI 默认配额 (次/月)
+AI_MONTHLY_LIMIT = "200"
+
+# =========================
+# Secrets (敏感密钥,不入 git)
+# 用以下命令注入:
+#   wrangler secret put DEEPSEEK_API_KEY
+#   wrangler secret put TENCENT_COS_SECRET_ID
+#   wrangler secret put TENCENT_COS_SECRET_KEY
+# =========================
+# DEEPSEEK_API_KEY
+# TENCENT_COS_SECRET_ID
+# TENCENT_COS_SECRET_KEY
