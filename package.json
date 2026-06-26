@@ -6,7 +6,7 @@
   "packageManager": "pnpm@10.3.0",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && node scripts/patch-env.mjs",
     "start": "node server.mjs",
     "preview": "vite preview",
     "release": "bumpp",

@@ -113,6 +113,10 @@ createServer(async (req, res) => {
     }
 
     const request = new Request(url, init);
+    // Ensure globalThis.env exists for requireEnv() compatibility
+    // In Workers, env is patched from fetch arguments by postbuild script
+    // In Node.js, we just ensure the global exists (empty is fine since no D1 here)
+    globalThis.env = globalThis.env ?? {};
     const response = await serverEntry.fetch(request);
 
     res.statusCode = response.status;
