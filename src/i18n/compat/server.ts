@@ -1,43 +1,26 @@
-import { defaultLocale, Locale } from "@/i18n/config";
-import zhMessages from "@/i18n/locales/zh.json";
-import enMessages from "@/i18n/locales/en.json";
-import { createTranslator } from "./utils";
+/**
+ * i18n 服务端兼容层 (stub)
+ */
 
-type Messages = Record<string, unknown>;
+const messages: Record<string, unknown> = {};
 
-const MESSAGES: Record<Locale, Messages> = {
-  zh: zhMessages as Messages,
-  en: enMessages as Messages
+export function getMessages(): Promise<Record<string, unknown>> {
+  return Promise.resolve(messages);
+}
+
+type Translator = ((key: string) => string) & {
+  raw: (key: string) => unknown;
 };
 
-let requestLocale: Locale = defaultLocale;
-
-export function setRequestLocale(locale: Locale) {
-  requestLocale = locale;
-}
-
-export async function getLocale() {
-  return requestLocale;
-}
-
-export async function getMessages({ locale }: { locale?: Locale } = {}) {
-  return MESSAGES[locale ?? requestLocale] ?? MESSAGES[defaultLocale];
-}
-
-export async function getTranslations({
-  locale,
-  namespace
-}: {
-  locale?: Locale;
+export async function getTranslations(opts: {
+  locale: string;
   namespace?: string;
-} = {}) {
-  const messages = await getMessages({ locale });
-  return createTranslator(messages, namespace);
+}): Promise<Translator> {
+  const t: Translator = ((key: string) => key) as Translator;
+  t.raw = (key: string) => key;
+  return t;
 }
 
-export function getRequestConfig<TArgs, TResult>(
-  callback: (args: TArgs) => TResult | Promise<TResult>
-) {
-  return callback;
+export function setRequestLocale(_locale: string): void {
+  // no-op
 }
-

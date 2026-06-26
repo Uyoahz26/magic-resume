@@ -1,35 +1,21 @@
-export type AIModelType = "doubao" | "deepseek" | "openai" | "gemini";
+/**
+ * AI 模型配置 (服务端配置已接管)
+ *
+ * 此处仅保留类型导出,客户端不再使用 API key 配置。
+ * 历史组件如 AIPolishDialog 等仍可能 import 此处的类型,但已无运行逻辑。
+ */
 
-export interface AIValidationContext {
-  doubaoApiKey?: string;
-  doubaoModelId?: string;
-  deepseekApiKey?: string;
-  deepseekModelId?: string;
-  openaiApiKey?: string;
-  openaiModelId?: string;
-  openaiApiEndpoint?: string;
-  geminiApiKey?: string;
-  geminiModelId?: string;
-}
+export type AIModelType = "deepseek";
 
 export interface AIModelConfig {
-  url: (endpoint?: string) => string;
+  url: () => string;
   requiresModelId: boolean;
   defaultModel?: string;
   headers: (apiKey: string) => Record<string, string>;
-  validate: (context: AIValidationContext) => boolean;
+  validate: (ctx: { apiKey?: string }) => boolean;
 }
 
 export const AI_MODEL_CONFIGS: Record<AIModelType, AIModelConfig> = {
-  doubao: {
-    url: () => "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
-    requiresModelId: true,
-    headers: (apiKey: string) => ({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    }),
-    validate: (context: AIValidationContext) => !!(context.doubaoApiKey && context.doubaoModelId),
-  },
   deepseek: {
     url: () => "https://api.deepseek.com/v1/chat/completions",
     requiresModelId: false,
@@ -38,24 +24,12 @@ export const AI_MODEL_CONFIGS: Record<AIModelType, AIModelConfig> = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     }),
-    validate: (context: AIValidationContext) => !!context.deepseekApiKey,
-  },
-  openai: {
-    url: (endpoint?: string) => `${(endpoint || "").trim().replace(/\/+$/, "")}/chat/completions`,
-    requiresModelId: true,
-    headers: (apiKey: string) => ({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    }),
-    validate: (context: AIValidationContext) => !!(context.openaiApiKey && context.openaiModelId && context.openaiApiEndpoint),
-  },
-  gemini: {
-    url: () => "https://generativelanguage.googleapis.com/v1beta",
-    requiresModelId: true,
-    headers: (apiKey: string) => ({
-      "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
-    }),
-    validate: (context: AIValidationContext) => !!(context.geminiApiKey && context.geminiModelId),
+    validate: (ctx) => !!ctx.apiKey,
   },
 };
+
+/** 历史兼容:旧组件可能读取这些键,但实际不再使用 */
+export interface AIValidationContext {
+  apiKey?: string;
+  model?: string;
+}
