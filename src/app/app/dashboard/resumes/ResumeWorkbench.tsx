@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTranslations, useLocale } from "@/i18n/compat/client";
 import { useRouter } from "@/lib/navigation";
 import { Plus, Settings, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -34,8 +33,7 @@ const PDF_IMAGE_QUALITY = 0.82;
 const PDF_MAX_IMAGE_WIDTH = 1600;
 
 export const ResumeWorkbench = () => {
-    const t = useTranslations();
-    const locale = useLocale();
+    const locale = "zh";
     const {
         resumes,
         setActiveResume,
@@ -111,13 +109,13 @@ export const ResumeWorkbench = () => {
         const newResume = {
             ...rest,
             id: generateUUID(),
-            title: `${resume.title || t("dashboard.resumes.untitled")} - ${t("common.copy")}`,
+            title: `${resume.title || "未命名简历"} - 复制`,
             createdAt: now,
             updatedAt: now,
         };
         
         const resumeId = addResume(newResume);
-        toast.success(t("previewDock.copyResume.success"));
+        toast.success("简历复制成功");
     };
 
     const importResumeFromJson = async (file: File) => {
@@ -137,7 +135,7 @@ export const ResumeWorkbench = () => {
         const resumeId = addResume(newResume);
         setActiveResume(resumeId);
         setIsImportDialogOpen(false);
-        toast.success(t("dashboard.resumes.importSuccess"));
+        toast.success("简历导入成功");
         router.push({ to: "/app/workbench/$id", params: { id: resumeId } });
     };
 
@@ -187,7 +185,7 @@ export const ResumeWorkbench = () => {
 
     const importResumeFromPdf = async (file: File) => {
         if (!geminiApiKey || !geminiModelId) {
-            toast.error(t("dashboard.resumes.importDialog.geminiConfigRequired"));
+            toast.error("请先配置 Gemini AI 设置");
             router.push("/app/dashboard/ai");
             return;
         }
@@ -233,7 +231,7 @@ export const ResumeWorkbench = () => {
         const resumeId = addResume(resume);
         setActiveResume(resumeId);
         setIsImportDialogOpen(false);
-        toast.success(t("dashboard.resumes.importDialog.pdfSuccess"));
+        toast.success("PDF 导入成功");
         router.push({ to: "/app/workbench/$id", params: { id: resumeId } });
     };
 
@@ -249,7 +247,7 @@ export const ResumeWorkbench = () => {
             await importResumeFromJson(file);
         } catch (error) {
             console.error("Import JSON error:", error);
-            toast.error(t("dashboard.resumes.importError"));
+            toast.error("导入失败");
         } finally {
             setIsImporting(false);
         }
@@ -270,7 +268,7 @@ export const ResumeWorkbench = () => {
             const message =
                 error instanceof Error && error.message
                     ? error.message
-                    : t("dashboard.resumes.importDialog.pdfError");
+                    : "PDF 导入失败";
             toast.error(message);
         } finally {
             setIsImporting(false);
@@ -296,7 +294,7 @@ export const ResumeWorkbench = () => {
                         <Alert className="mb-6 bg-green-50/50 dark:bg-green-950/30 border-green-200 dark:border-green-900">
                             <AlertDescription className="flex items-center justify-between">
                                 <span className="text-green-700 dark:text-green-400">
-                                    {t("dashboard.resumes.synced")}
+                                    已同步
                                 </span>
                                 <Button
                                     size="sm"
@@ -307,7 +305,7 @@ export const ResumeWorkbench = () => {
                                     }}
                                 >
                                     <Settings className="w-4 h-4 mr-2" />
-                                    {t("dashboard.resumes.view")}
+                                    查看
                                 </Button>
                             </AlertDescription>
                         </Alert>
@@ -317,10 +315,10 @@ export const ResumeWorkbench = () => {
                             className="mb-6 bg-red-50/50 dark:bg-red-950/30 border-red-200 dark:border-red-900"
                         >
                             <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>{t("dashboard.resumes.notice.title")}</AlertTitle>
+                            <AlertTitle>注意</AlertTitle>
                             <AlertDescription className="flex items-center justify-between">
                                 <span className="text-red-700 dark:text-red-400">
-                                    {t("dashboard.resumes.notice.description")}
+                                    请先配置同步文件夹以确保您的简历数据安全
                                 </span>
                                 <Button
                                     variant="outline"
@@ -331,7 +329,7 @@ export const ResumeWorkbench = () => {
                                     }}
                                 >
                                     <Settings className="w-4 h-4 mr-2" />
-                                    {t("dashboard.resumes.notice.goToSettings")}
+                                    前往设置
                                 </Button>
                             </AlertDescription>
                         </Alert>
@@ -345,7 +343,7 @@ export const ResumeWorkbench = () => {
                     transition={{ duration: 0.3 }}
                 >
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                        {t("dashboard.resumes.myResume")}
+                        我的简历
                     </h1>
                     <div className="flex items-center space-x-2">
                         <AnimatedImportButton onClick={() => setIsImportDialogOpen(true)} t={t} />
@@ -360,7 +358,7 @@ export const ResumeWorkbench = () => {
                                 className="bg-gray-900 text-white hover:bg-gray-800 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
                             >
                                 <Plus className="mr-2 h-4 w-4" />
-                                {t("dashboard.resumes.create")}
+                                创建简历
                             </Button>
                         </motion.div>
                     </div>
@@ -395,10 +393,10 @@ export const ResumeWorkbench = () => {
                                         <Plus className="h-8 w-8 text-gray-600 dark:text-primary" />
                                     </motion.div>
                                     <CardTitle className="text-xl text-gray-900 dark:text-gray-100 px-4">
-                                        {t("dashboard.resumes.newResume")}
+                                        新建简历
                                     </CardTitle>
                                     <CardDescription className="mt-2 text-gray-600 dark:text-gray-400 px-4">
-                                        {t("dashboard.resumes.newResumeDescription")}
+                                        点击创建新简历
                                     </CardDescription>
                                 </CardContent>
                             </Card>

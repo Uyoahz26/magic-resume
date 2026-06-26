@@ -12,7 +12,6 @@ import { GripVertical, Eye, EyeOff, ChevronDown, Trash2 } from "lucide-react";
 import { useState, useCallback } from "react";
 import Field from "../Field";
 import ThemeModal from "@/components/shared/ThemeModal";
-import { useTranslations } from "@/i18n/compat/client";
 
 interface EducationEditorProps {
   education: Education;
@@ -25,7 +24,6 @@ const EducationEditor: React.FC<EducationEditorProps> = ({
   education,
   onSave,
 }) => {
-  const t = useTranslations("workbench.educationItem");
   const handleChange = (field: keyof Education, value: string) => {
     onSave({
       ...education,
@@ -38,45 +36,45 @@ const EducationEditor: React.FC<EducationEditorProps> = ({
       <div className="grid gap-5">
         <div className="grid grid-cols-2 gap-4">
           <Field
-            label={t("labels.school")}
+            label={"学校名称"}
             value={education.school}
             onChange={(value) => handleChange("school", value)}
-            placeholder={t("placeholders.school")}
+            placeholder={"请输入学校名称"}
           />
           <Field
-            label={t("labels.major")}
+            label={"专业"}
             value={education.major}
             onChange={(value) => handleChange("major", value)}
-            placeholder={t("placeholders.major")}
+            placeholder={"请输入专业名称"}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <Field
-            label={t("labels.degree")}
+            label={"学历"}
             value={education.degree}
             onChange={(value) => handleChange("degree", value)}
-            placeholder={t("placeholders.degree")}
+            placeholder={"请选择学历"}
           />
 
           <Field
-            label={t("labels.gpa")}
+            label={"GPA"}
             value={education.gpa || ""}
             onChange={(value) => handleChange("gpa", value)}
-            placeholder={t("placeholders.gpa")}
+            placeholder={"请输入GPA"}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <Field
-            label={t("labels.startDate")}
+            label={"开始时间"}
             value={education.startDate}
             onChange={(value) => handleChange("startDate", value)}
             type="date"
             placeholder="YYYY-MM"
           />
           <Field
-            label={t("labels.endDate")}
+            label={"结束时间"}
             value={education.endDate}
             onChange={(value) => handleChange("endDate", value)}
             type="date"
@@ -86,11 +84,11 @@ const EducationEditor: React.FC<EducationEditorProps> = ({
         </div>
 
         <Field
-          label={t("labels.description")}
+          label={"学校简介"}
           value={education.description}
           onChange={(value) => handleChange("description", value)}
           type="editor"
-          placeholder={t("placeholders.description")}
+          placeholder={"请输入学校简介"}
         />
       </div>
     </div>

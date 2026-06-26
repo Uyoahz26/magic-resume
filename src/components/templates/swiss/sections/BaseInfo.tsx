@@ -5,7 +5,7 @@ import { cn, formatDateString } from "@/lib/utils";
 import { BasicInfo, getBorderRadiusValue, GlobalSettings } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
 import SectionWrapper from "../../shared/SectionWrapper";
-import { useTranslations, useLocale } from "@/i18n/compat/client";
+import { BASIC_FIELD_LABELS } from "@/config/labels";
 import GithubContribution from "@/components/shared/GithubContribution";
 import { getCustomFieldDisplayText, getCustomFieldHref, shouldShowCustomFieldLabelPrefix } from "@/lib/customField";
 
@@ -16,8 +16,7 @@ interface BaseInfoProps {
 }
 
 const BaseInfo = ({ basic = {} as BasicInfo, globalSettings, template }: BaseInfoProps) => {
-    const t = useTranslations("workbench");
-    const locale = useLocale();
+    const locale = "zh";
     const useIconMode = globalSettings?.useIconMode ?? false;
     const layout = basic?.layout || "left";
     const themeColor = globalSettings?.themeColor || "#E31C24";
@@ -152,7 +151,7 @@ const BaseInfo = ({ basic = {} as BasicInfo, globalSettings, template }: BaseInf
                                 <div className="flex items-center gap-1.5 min-w-0 leading-tight">
                                     {!useIconMode && !item.custom && (
                                         <span className="shrink-0 font-extrabold text-[12px] text-slate-400 uppercase tracking-wider">
-                                            {t(`basicPanel.basicFields.${item.key}`)}
+                                            {BASIC_FIELD_LABELS[item.key] ?? item.key}
                                         </span>
                                     )}
                                     {!useIconMode && item.custom && shouldShowCustomFieldLabelPrefix(item) && (

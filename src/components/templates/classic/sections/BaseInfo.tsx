@@ -5,7 +5,7 @@ import { cn, formatDateString } from "@/lib/utils";
 import { BasicInfo, getBorderRadiusValue, GlobalSettings } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
 import SectionWrapper from "../../shared/SectionWrapper";
-import { useTranslations, useLocale } from "@/i18n/compat/client";
+import { BASIC_FIELD_LABELS } from "@/config/labels";
 import GithubContribution from "@/components/shared/GithubContribution";
 import { getCustomFieldDisplayText, getCustomFieldHref, shouldShowCustomFieldLabelPrefix } from "@/lib/customField";
 
@@ -16,8 +16,7 @@ interface BaseInfoProps {
 }
 
 const BaseInfo = ({ basic = {} as BasicInfo, globalSettings, template }: BaseInfoProps) => {
-    const t = useTranslations("workbench");
-    const locale = useLocale();
+    const locale = "zh";
     const useIconMode = globalSettings?.useIconMode ?? false;
     const layout = basic?.layout || "left";
 
@@ -93,7 +92,7 @@ const BaseInfo = ({ basic = {} as BasicInfo, globalSettings, template }: BaseInf
                                 </div>
                             ) : (
                                 <div className="flex min-w-0 items-start gap-2">
-                                    {!item.custom && <span className="shrink-0">{t(`basicPanel.basicFields.${item.key}`)}:</span>}
+                                    {!item.custom && <span className="shrink-0">{BASIC_FIELD_LABELS[item.key] ?? item.key}:</span>}
                                     {item.custom && shouldShowCustomFieldLabelPrefix(item) && <span className="shrink-0">{item.label}:</span>}
                                     {customFieldHref ? <a href={customFieldHref} target="_blank" rel="noopener noreferrer" className="min-w-0 underline [overflow-wrap:anywhere]" suppressHydrationWarning>{item.value}</a> : <span className="min-w-0 [overflow-wrap:anywhere]" suppressHydrationWarning>{item.value}</span>}
                                 </div>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTranslations } from "@/i18n/compat/client";
 import { Download, Loader2, ChevronDown, ShieldCheck } from "lucide-react";
 import { useResumeStore } from "@/store/useResumeStore";
 import { Button } from "@/components/ui/button";
@@ -79,6 +78,16 @@ const ExportCard = ({
   );
 };
 
+const basicFieldLabels = {
+  name: "姓名",
+  title: "职位",
+  employementStatus: "就业状态",
+  birthDate: "出生日期",
+  email: "邮箱",
+  phone: "电话",
+  location: "地址"
+};
+
 const PdfExport = ({ children }: { children?: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -87,8 +96,6 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
   const [isExportingMarkdown, setIsExportingMarkdown] = useState(false);
   const { activeResume } = useResumeStore();
   const { globalSettings = {}, title } = activeResume || {};
-  const t = useTranslations("pdfExport");
-  const tBasicField = useTranslations("workbench.basicPanel.basicFields");
 
   const handleExport = async () => {
     await exportToPdf({
@@ -98,8 +105,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
       fontFamily: globalSettings?.fontFamily,
       onStart: () => setIsExporting(true),
       onEnd: () => setIsExporting(false),
-      successMessage: t("toast.success"),
-      errorMessage: t("toast.error")
+      successMessage: "PDF 导出成功",
+      errorMessage: "PDF 导出失败"
     });
   };
 
@@ -109,8 +116,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
       title,
       onStart: () => setIsExportingJson(true),
       onEnd: () => setIsExportingJson(false),
-      successMessage: t("toast.jsonSuccess"),
-      errorMessage: t("toast.jsonError")
+      successMessage: "JSON 导出成功",
+      errorMessage: "JSON 导出失败"
     });
   };
 
@@ -120,18 +127,10 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
       title,
       onStart: () => setIsExportingMarkdown(true),
       onEnd: () => setIsExportingMarkdown(false),
-      successMessage: t("toast.markdownSuccess"),
-      errorMessage: t("toast.markdownError"),
+      successMessage: "Markdown 导出成功",
+      errorMessage: "Markdown 导出失败",
       markdownOptions: {
-        basicFieldLabels: {
-          name: tBasicField("name"),
-          title: tBasicField("title"),
-          employementStatus: tBasicField("employementStatus"),
-          birthDate: tBasicField("birthDate"),
-          email: tBasicField("email"),
-          phone: tBasicField("phone"),
-          location: tBasicField("location")
-        }
+        basicFieldLabels
       }
     });
   };
@@ -158,18 +157,18 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
 
   const isLoading = isExporting || isExportingJson || isExportingMarkdown || isPrinting;
   const loadingText = isExporting
-    ? t("button.exporting")
+    ? "导出中..."
     : isExportingJson
-      ? t("button.exportingJson")
+      ? "JSON 导出中..."
       : isExportingMarkdown
-        ? t("button.exportingMarkdown")
+        ? "Markdown 导出中..."
         : isPrinting
-          ? t("button.exporting")
+          ? "打印中..."
           : "";
 
   return (
     <Dialog open={isOpen} onOpenChange={(val) => {
-      if (isLoading) return; // 导出中不允许关闭，以防止打断流程或丢失提示
+      if (isLoading) return;
       setIsOpen(val);
     }}>
       <DialogTrigger asChild>
@@ -186,7 +185,7 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>{t("button.export")}</span>
+                <span>导出</span>
                 <ChevronDown className="w-3.5 h-3.5 opacity-60 ml-0.5" />
               </>
             )}
@@ -202,10 +201,10 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
 
           <DialogHeader className="relative gap-2">
             <DialogTitle className="text-2xl font-bold tracking-tight">
-              {t("modal.title")}
+              导出简历
             </DialogTitle>
             <DialogDescription className="text-[15px] text-muted-foreground/80 mt-1">
-              {t("modal.subtitle")}
+              选择导出格式，将您的简历保存为不同格式
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -215,8 +214,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative">
             <ExportCard
               icon={PdfGlassIcon}
-              title={t("button.exportPdf")}
-              description={t("modal.pdfDesc")}
+              title="导出 PDF"
+              description="将简历导出为 PDF 格式，适合打印和发送"
               isLoading={isExporting}
               onClick={handleExport}
               bgGradientClass="from-rose-500/10 dark:from-rose-500/20"
@@ -224,8 +223,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
             />
             <ExportCard
               icon={PrintGlassIcon}
-              title={t("button.print")}
-              description={t("modal.printDesc")}
+              title="打印"
+              description="直接调用浏览器打印功能"
               isLoading={isPrinting}
               onClick={handlePrint}
               bgGradientClass="from-sky-500/10 dark:from-sky-500/20"
@@ -233,8 +232,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
             />
             <ExportCard
               icon={JsonGlassIcon}
-              title={t("button.exportJson")}
-              description={t("modal.jsonDesc")}
+              title="导出 JSON"
+              description="将简历数据导出为 JSON 格式，保留所有信息"
               isLoading={isExportingJson}
               onClick={handleJsonExport}
               bgGradientClass="from-amber-500/10 dark:from-amber-500/20"
@@ -242,8 +241,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
             />
             <ExportCard
               icon={MarkdownGlassIcon}
-              title={t("button.exportMarkdown")}
-              description={t("modal.markdownDesc")}
+              title="导出 Markdown"
+              description="将简历导出为 Markdown 格式"
               isLoading={isExportingMarkdown}
               onClick={handleMarkdownExport}
               bgGradientClass="from-indigo-500/10 dark:from-indigo-500/20"
@@ -255,7 +254,7 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
           <div className="mt-6 flex items-center gap-2 p-3 sm:px-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
             <ShieldCheck className="w-4 h-4 shrink-0" />
             <p className="text-[13px] font-medium">
-              {t("modal.privacyNotice")}
+              您的数据仅在本地处理，不会上传至任何服务器
             </p>
           </div>
         </div>

@@ -4,7 +4,6 @@ import SectionWrapper from "../../shared/SectionWrapper";
 import { GlobalSettings, CustomItem } from "@/types/resume";
 import { normalizeRichTextContent } from "@/lib/richText";
 import { formatDateString } from "@/lib/utils";
-import { useLocale } from "@/i18n/compat/client";
 
 interface CustomSectionProps {
     sectionId: string;
@@ -15,7 +14,7 @@ interface CustomSectionProps {
 }
 
 const CustomSection = ({ sectionId, title, items, globalSettings, showTitle = true }: CustomSectionProps) => {
-    const locale = useLocale();
+    const locale = "zh";
     const visibleItems = items?.filter((item) => item.visible && (item.title || item.description));
     const centerSubtitle = globalSettings?.centerSubtitle;
     const flexLayout = globalSettings?.flexibleHeaderLayout;

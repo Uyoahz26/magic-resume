@@ -20,10 +20,8 @@ import { ResumeData } from "@/types/resume";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { useTranslations } from "@/i18n/compat/client";
 
 export function GrammarCheckDrawer() {
-  const t = useTranslations("grammarCheck");
   const {
     errors,
     clearErrors,
@@ -104,9 +102,9 @@ export function GrammarCheckDrawer() {
     if (replaced) {
       updateResume(activeResume.id, newResume);
       dismissError(index);
-      toast.success(t("applied_success"));
+      toast.success("已应用修改");
     } else {
-      toast.error(t("apply_error"));
+      toast.error("未找到对应文本，无法自动修改");
     }
   };
 
@@ -124,9 +122,9 @@ export function GrammarCheckDrawer() {
                 <Check className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <SheetTitle className="text-lg font-semibold">{t("title")}</SheetTitle>
+                <SheetTitle className="text-lg font-semibold">{"AI 语法检查"}</SheetTitle>
                 <SheetDescription className="text-xs">
-                  {t("description", { count: errors.length })}
+                  {`发现 ${errors.length} 个建议优化项`}
                 </SheetDescription>
               </div>
             </div>
@@ -172,7 +170,7 @@ export function GrammarCheckDrawer() {
                                     : "bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/50"
                             )}
                         >
-                            {error.type === "spelling" ? t("spelling") : t("punctuation")}
+                            {error.type === "spelling" ? "错别字" : "标点符号"}
                         </Badge>
                         {/* 只有当 reason 与 Badge 内容不同时才显示 */}
                         {error.reason && error.reason !== "错别字" && error.reason !== "标点符号" && (
@@ -188,7 +186,7 @@ export function GrammarCheckDrawer() {
                             {/* 原文 */}
                             <div className="space-y-1.5 group/original">
                                 <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider pl-1">
-                                    {t("original")}
+                                    {"原文"}
                                 </div>
                                 <div className="p-3 rounded-lg bg-red-50/50 dark:bg-red-950/20 text-sm text-foreground/80 leading-relaxed border border-red-100/50 dark:border-red-900/30 transition-colors group-hover/original:bg-red-50 dark:group-hover/original:bg-red-950/30">
                                      <span className="line-through decoration-red-400/30 text-muted-foreground/80">
@@ -211,7 +209,7 @@ export function GrammarCheckDrawer() {
                             {/* 建议 */}
                             <div className="space-y-1.5 group/suggestion">
                                 <div className="text-[10px] font-medium text-emerald-600/80 dark:text-emerald-400/80 uppercase tracking-wider pl-1">
-                                    {t("suggestion")}
+                                    {"建议修改"}
                                 </div>
                                 <div className="p-3 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 text-sm text-foreground leading-relaxed border border-emerald-100/50 dark:border-emerald-900/30 font-medium transition-colors group-hover/suggestion:bg-emerald-50 dark:group-hover/suggestion:bg-emerald-950/30">
                                     {error.suggestion}
@@ -230,7 +228,7 @@ export function GrammarCheckDrawer() {
                                 }}
                             >
                                 <Check className="w-4 h-4 mr-2" />
-                                {t("accept")}
+                                {"应用"}
                             </Button>
                             <Button 
                                 variant="outline" 
@@ -242,7 +240,7 @@ export function GrammarCheckDrawer() {
                                 }}
                             >
                                 <X className="w-4 h-4 mr-2" />
-                                {t("ignore")}
+                                {"忽略"}
                             </Button>
                         </div>
                     </div>
@@ -255,9 +253,9 @@ export function GrammarCheckDrawer() {
                         <div className="w-20 h-20 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6 animate-in zoom-in duration-500">
                              <Check className="w-10 h-10 text-green-500 dark:text-green-400" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">{t("no_errors_title")}</h3>
+                        <h3 className="text-xl font-semibold mb-2">{"太棒了！"}</h3>
                         <p className="text-muted-foreground max-w-[250px]">
-                            {t("no_errors_desc")}
+                            {"文档非常完美，没有发现任何错别字或标点错误。"}
                         </p>
                     </div>
                 )}

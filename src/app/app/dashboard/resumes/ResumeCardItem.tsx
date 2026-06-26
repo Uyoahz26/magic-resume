@@ -27,7 +27,6 @@ import { Edit2, Copy, Trash2 } from "lucide-react";
 interface ResumeCardItemProps {
     id: string;
     resume: any;
-    t: any;
     locale: string;
     setActiveResume: (id: string) => void;
     router: any;
@@ -39,7 +38,6 @@ interface ResumeCardItemProps {
 export const ResumeCardItem = ({
     id,
     resume,
-    t,
     locale,
     setActiveResume,
     router,
@@ -50,19 +48,17 @@ export const ResumeCardItem = ({
     const containerRef = React.useRef<HTMLDivElement>(null);
     const [scale, setScale] = React.useState(0.24);
     const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
-    
+
     const activeTemplate =
         DEFAULT_TEMPLATES.find((template) => template.id === resume.templateId) ??
         DEFAULT_TEMPLATES[0];
-    const templateNameKey =
-        activeTemplate.id === "left-right" ? "leftRight" : activeTemplate.id;
 
     React.useEffect(() => {
         if (!containerRef.current) return;
         const observer = new ResizeObserver((entries) => {
             const { width } = entries[0].contentRect;
             if (width > 0) {
-                setScale(width / 793.700787); // Exact 210mm in pixels at 96dpi
+                setScale(width / 793.700787);
             }
         });
         observer.observe(containerRef.current);
@@ -88,7 +84,7 @@ export const ResumeCardItem = ({
                     "dark:hover:border-primary/40"
                 )}
             >
-                <CardContent 
+                <CardContent
                     className="p-0 flex-1 relative bg-gray-50 dark:bg-gray-900 overflow-hidden cursor-pointer"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -118,10 +114,10 @@ export const ResumeCardItem = ({
                     <div className="absolute inset-x-0 bottom-0 pt-12 pb-3 px-4 flex justify-between items-end border-t border-transparent z-10 transition-colors group-hover:bg-white/50 dark:group-hover:bg-gray-950/50">
                         <div className="flex flex-col w-full">
                             <span className="text-[15px] font-semibold truncate text-gray-900 dark:text-gray-100 drop-shadow-sm w-[90%]">
-                                {resume.title || t("dashboard.resumes.untitled")}
+                                {resume.title || "未命名简历"}
                             </span>
                             <span className="text-[11px] text-gray-600 dark:text-gray-300 mt-0.5 font-medium">
-                                {t(`dashboard.templates.${templateNameKey}.name`)} · {new Intl.DateTimeFormat(locale, {
+                                {activeTemplate.name} · {new Intl.DateTimeFormat("zh", {
                                     year: 'numeric',
                                     month: 'short',
                                     day: 'numeric',
@@ -144,7 +140,7 @@ export const ResumeCardItem = ({
                             className="flex-1 flex items-center justify-center gap-1.5 hover:bg-white dark:hover:bg-gray-800/80 transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-primary font-medium text-sm group"
                         >
                             <Edit2 className="w-3.5 h-3.5 group-hover:scale-110 transition-transform opacity-70 group-hover:opacity-100" />
-                            <span>{t("common.edit")}</span>
+                            <span>编辑</span>
                         </button>
 
                         <button
@@ -155,7 +151,7 @@ export const ResumeCardItem = ({
                             className="flex-1 flex items-center justify-center gap-1.5 hover:bg-white dark:hover:bg-gray-800/80 transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium text-sm group"
                         >
                             <Copy className="w-3.5 h-3.5 group-hover:scale-110 transition-transform opacity-70 group-hover:opacity-100" />
-                            <span>{t("common.copy")}</span>
+                            <span>复制</span>
                         </button>
 
                         <button
@@ -166,7 +162,7 @@ export const ResumeCardItem = ({
                             className="flex-1 flex items-center justify-center gap-1.5 hover:bg-red-50 dark:hover:bg-red-950/40 transition-all duration-200 text-red-600 dark:text-red-400 font-medium text-sm group"
                         >
                             <Trash2 className="w-3.5 h-3.5 group-hover:scale-110 transition-transform opacity-80 group-hover:opacity-100" />
-                            <span>{t("common.delete")}</span>
+                            <span>删除</span>
                         </button>
                     </div>
                 </CardFooter>
@@ -175,14 +171,14 @@ export const ResumeCardItem = ({
             <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                 <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t("dashboard.resumes.deleteConfirmTitle")}</AlertDialogTitle>
+                        <AlertDialogTitle>确认删除</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {t("dashboard.resumes.deleteConfirmDescription")}
+                            确定要删除这份简历吗？此操作无法撤销。
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(false); }}>
-                            {t("common.cancel")}
+                            取消
                         </AlertDialogCancel>
                         <AlertDialogAction
                             className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-600 border-none"
@@ -190,10 +186,10 @@ export const ResumeCardItem = ({
                                 e.stopPropagation();
                                 deleteResume(resume);
                                 setShowDeleteDialog(false);
-                                toast.success(t("common.deleteSuccess"));
+                                toast.success("删除成功");
                             }}
                         >
-                            {t("common.confirm")}
+                            确认
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

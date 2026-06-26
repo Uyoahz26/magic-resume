@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocale, useTranslations } from "@/i18n/compat/client";
 import {
     Dialog,
     DialogContent,
@@ -12,7 +11,6 @@ import { DEFAULT_TEMPLATES } from "@/config";
 import { initialResumeState } from "@/config/initialResumeData";
 import ResumeTemplateComponent from "@/components/templates";
 import { useTemplateSnapshots } from "@/hooks/useTemplateSnapshots";
-import type { Translator } from "@/i18n/compat/utils";
 import type { ResumeData } from "@/types/resume";
 import type { ResumeTemplate } from "@/types/template";
 import { ChevronLeft, FilePlus, Sparkles, X } from "lucide-react";
@@ -30,54 +28,47 @@ const A4_HEIGHT_PX = 1122.519685;
 type BlankTemplate = {
     id: null;
     isBlank: true;
-    nameKey: "blankTitle";
 };
 
-type NormalTemplate = ResumeTemplate & { isBlank: false; nameKey: string };
+type NormalTemplate = ResumeTemplate & { isBlank: false };
 type TemplateOption = NormalTemplate | BlankTemplate;
 
-const toTemplateNameKey = (templateId: string) =>
-    templateId === "left-right" ? "leftRight" : templateId;
-
-const BLANK_TEMPLATE: BlankTemplate = { id: null, isBlank: true, nameKey: "blankTitle" };
+const BLANK_TEMPLATE: BlankTemplate = { id: null, isBlank: true };
 const NORMAL_TEMPLATES: NormalTemplate[] = DEFAULT_TEMPLATES.map((template) => ({
     ...template,
     isBlank: false,
-    nameKey: toTemplateNameKey(template.id),
 }));
 
-const BlankTemplateThumbnail = ({ t }: { t: Translator }) => (
+const BlankTemplateThumbnail = () => (
     <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800/50">
         <div className="w-24 h-24 rounded-full bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center mb-6 text-gray-400 group-hover:text-primary transition-colors">
             <FilePlus className="w-12 h-12" />
         </div>
         <span className="text-2xl font-bold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">
-            {t("dashboard.resumes.createDialog.blankTitle")}
+            空白简历
         </span>
         <p className="text-gray-500 mt-4 text-base px-8 text-center leading-relaxed">
-            {t("dashboard.resumes.createDialog.blankThumbnailDescription")}
+            从头开始创建一份新简历
         </p>
     </div>
 );
 
 const TemplateCardThumbnail = ({
     template,
-    t,
     snapshotSrc,
 }: {
     template: TemplateOption,
-    t: Translator,
     snapshotSrc?: string | null,
 }) => {
     if (template.isBlank) {
-        return <BlankTemplateThumbnail t={t} />;
+        return <BlankTemplateThumbnail />;
     }
 
     if (snapshotSrc) {
         return (
             <img
                 src={snapshotSrc}
-                alt={t(`dashboard.templates.${template.nameKey}.name`)}
+                alt={template.name}
                 className="h-full w-full object-cover object-top"
                 loading="eager"
                 draggable={false}
@@ -88,7 +79,7 @@ const TemplateCardThumbnail = ({
     return (
         <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800/50">
             <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                {t(`dashboard.templates.${template.nameKey}.name`)}
+                {template.name}
             </span>
         </div>
     );
@@ -96,12 +87,10 @@ const TemplateCardThumbnail = ({
 
 const TemplateThumbnail = ({
     template,
-    t,
     scaleModifier = 1,
-    quality = "low" // low for grid, high for preview
+    quality = "low"
 }: {
     template: TemplateOption,
-    t: Translator,
     scaleModifier?: number,
     quality?: "low" | "high"
 }) => {
@@ -113,7 +102,7 @@ const TemplateThumbnail = ({
         const observer = new ResizeObserver((entries) => {
             const { width } = entries[0].contentRect;
             if (width > 0) {
-                setScale((width / A4_WIDTH_PX) * scaleModifier); // Exact 210mm in pixels at 96dpi
+                setScale((width / A4_WIDTH_PX) * scaleModifier);
             }
         });
         observer.observe(containerRef.current);
@@ -121,17 +110,17 @@ const TemplateThumbnail = ({
     }, [template.isBlank, scaleModifier]);
 
     if (template.isBlank) {
-        return <BlankTemplateThumbnail t={t} />;
+        return <BlankTemplateThumbnail />;
     }
 
     const sampleExperience = quality === "high"
         ? [
             {
                 id: "1",
-                company: t("dashboard.resumes.createDialog.sample.company"),
-                position: t("dashboard.resumes.createDialog.sample.position"),
-                date: `2020-01 - ${t("dashboard.resumes.createDialog.sample.present")}`,
-                details: t("dashboard.resumes.createDialog.sample.workDescription"),
+                company: "示例公司",
+                position: "高级工程师",
+                date: "2020-01 - 至今",
+                details: "负责核心业务开发",
                 visible: true,
             },
         ]
@@ -154,13 +143,11 @@ const TemplateThumbnail = ({
             ...initialResumeState.basic,
             layout: (template.basic?.layout as any) || "left",
         },
-        // Feed richer mock content in large preview.
         experience: sampleExperience,
     };
 
     return (
         <div className="w-full h-full overflow-hidden bg-white flex items-center justify-center" ref={containerRef}>
-            {/* Wrapper to hold the exact scaled dimensions so flexbox layout is preserved without absolute positioning */}
             <div
                 style={{
                     width: scale * A4_WIDTH_PX,
@@ -193,9 +180,7 @@ export const CreateResumeModal = ({
     onOpenChange,
     onCreate,
 }: CreateResumeModalProps) => {
-    const t = useTranslations();
-    const locale = useLocale();
-    const { snapshotMap } = useTemplateSnapshots(locale);
+    const { snapshotMap } = useTemplateSnapshots("zh");
     const [previewTarget, setPreviewTarget] = useState<TemplateOption | null>(null);
 
     const handleCreate = (template: TemplateOption) => {
@@ -203,7 +188,6 @@ export const CreateResumeModal = ({
         setPreviewTarget(null);
     };
 
-    // Close preview when dialog closes
     useEffect(() => {
         if (!open) {
             const timeoutId = window.setTimeout(() => setPreviewTarget(null), 300);
@@ -214,19 +198,18 @@ export const CreateResumeModal = ({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent hideClose className="max-w-[1100px] w-[95vw] h-[90vh] sm:h-[85vh] p-0 overflow-hidden bg-white/95 dark:bg-gray-950/95 backdrop-blur-2xl border-white/20 dark:border-white/10 shadow-2xl rounded-[2rem] flex flex-col">
-                {/* We keep an empty DialogTitle to satisfy accessibility requirements without taking up space */}
-                <DialogTitle className="sr-only">{t("dashboard.resumes.createDialog.title")}</DialogTitle>
+                <DialogTitle className="sr-only">创建简历</DialogTitle>
 
                 <div className="relative w-full h-full min-h-0 flex flex-col">
                     {/* HEADER BAR */}
                     <div className="flex-none px-8 py-6 flex items-center justify-between z-10">
                         <div className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-500 dark:from-white dark:to-gray-400 flex items-center">
-                            {t("dashboard.resumes.createDialog.title")}
+                            创建简历
                         </div>
                         <button
                             type="button"
                             onClick={() => onOpenChange(false)}
-                            aria-label={t("common.cancel")}
+                            aria-label="关闭"
                             className="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         >
                             <X className="w-6 h-6 text-gray-400" />
@@ -240,7 +223,7 @@ export const CreateResumeModal = ({
                                 <section>
                                     <div className="flex items-center mb-6">
                                         <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                                            {t("dashboard.resumes.createDialog.startFromBlank")}
+                                            从空白开始
                                         </h4>
                                         <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1 ml-6" />
                                     </div>
@@ -251,7 +234,6 @@ export const CreateResumeModal = ({
                                         onClick={() => handleCreate(BLANK_TEMPLATE)}
                                         className="group cursor-pointer rounded-2xl border border-gray-200/60 dark:border-gray-800/60 shadow-sm bg-gray-50/50 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-900 hover:shadow-xl hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 p-6 flex flex-col sm:flex-row items-center gap-6"
                                     >
-                                        {/* Small visual icon area */}
                                         <motion.div
                                             layoutId={`card-image-blank`}
                                             className="h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0 rounded-2xl bg-white dark:bg-gray-800 shadow-inner flex items-center justify-center border border-gray-100 dark:border-gray-700"
@@ -262,16 +244,16 @@ export const CreateResumeModal = ({
                                         <div className="flex-1 text-center sm:text-left">
                                             <motion.div layoutId={`card-title-blank`} className="inline-block">
                                                 <h5 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
-                                                    {t("dashboard.resumes.createDialog.blankTitle")}
+                                                    空白简历
                                                 </h5>
                                             </motion.div>
                                             <p className="text-gray-500 dark:text-gray-400 text-sm max-w-lg leading-relaxed">
-                                                {t("dashboard.resumes.createDialog.blankCardDescription")}
+                                                从头开始创建一份全新的简历，自由设计内容和布局
                                             </p>
                                         </div>
 
-                                        <div className="hidden sm:flex text-primary font-medium items-center text-sm   group-hover:translate-x-0 duration-300">
-                                            {t("dashboard.resumes.createDialog.createNow")} <ChevronLeft className="w-4 h-4 ml-1 rotate-180" />
+                                        <div className="hidden sm:flex text-primary font-medium items-center text-sm group-hover:translate-x-0 duration-300">
+                                            立即创建 <ChevronLeft className="w-4 h-4 ml-1 rotate-180" />
                                         </div>
                                     </motion.div>
                                 </section>
@@ -280,14 +262,12 @@ export const CreateResumeModal = ({
                                 <section>
                                     <div className="flex items-center mb-6">
                                         <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                                            {t("dashboard.resumes.createDialog.startFromTemplate")}
+                                            使用模板
                                         </h4>
                                         <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1 ml-6" />
                                     </div>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8 hover:!shadow-none">
                                         {NORMAL_TEMPLATES.map((template) => {
-                                            const templateName = t(`dashboard.templates.${template.nameKey}.name`);
-
                                             return (
                                                 <motion.div
                                                     key={template.id}
@@ -297,27 +277,24 @@ export const CreateResumeModal = ({
                                                     onClick={() => setPreviewTarget(template)}
                                                     className="group cursor-pointer flex flex-col"
                                                 >
-                                                    {/* The Thumbnail Card */}
                                                     <motion.div
                                                         layoutId={`card-image-${template.id}`}
                                                         className="aspect-[210/297] rounded-2xl overflow-hidden border border-gray-200/60 dark:border-gray-800/60 shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:border-primary/50 dark:group-hover:border-primary/50 bg-white dark:bg-gray-900 relative"
                                                     >
                                                         <TemplateCardThumbnail
                                                             template={template}
-                                                            t={t}
                                                             snapshotSrc={snapshotMap[template.id]}
                                                         />
                                                         <div className="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 rounded-2xl pointer-events-none" />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                     </motion.div>
 
-                                                    {/* Minimalist Title below */}
                                                     <motion.div
                                                         layoutId={`card-title-${template.id}`}
                                                         className="mt-4 flex items-center justify-center"
                                                     >
                                                         <span className="text-[15px] font-semibold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">
-                                                            {templateName}
+                                                            {template.name}
                                                         </span>
                                                     </motion.div>
                                                 </motion.div>
@@ -346,7 +323,7 @@ export const CreateResumeModal = ({
                                             type="button"
                                             onClick={() => setPreviewTarget(null)}
                                             className="rounded-full p-2 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-colors"
-                                            aria-label={t("dashboard.resumes.createDialog.backToGrid")}
+                                            aria-label="返回"
                                         >
                                             <ChevronLeft className="w-5 h-5 text-gray-500 hover:text-primary dark:text-gray-400" />
                                         </button>
@@ -366,7 +343,7 @@ export const CreateResumeModal = ({
                                                 width: "auto"
                                             }}
                                         >
-                                            <TemplateThumbnail template={previewTarget} t={t} quality="high" scaleModifier={1} />
+                                            <TemplateThumbnail template={previewTarget} quality="high" scaleModifier={1} />
                                         </motion.div>
                                     </motion.div>
                                 </div>
@@ -379,9 +356,7 @@ export const CreateResumeModal = ({
                                             className="inline-block"
                                         >
                                             <h3 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white mb-4">
-                                                {previewTarget.isBlank
-                                                    ? t("dashboard.resumes.createDialog.blankTitle")
-                                                    : t(`dashboard.templates.${previewTarget.nameKey}.name`)}
+                                                {previewTarget.isBlank ? "空白简历" : previewTarget.name}
                                             </h3>
                                         </motion.div>
 
@@ -389,8 +364,8 @@ export const CreateResumeModal = ({
 
                                         <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-10 font-medium">
                                             {previewTarget.isBlank
-                                                ? t("dashboard.resumes.createDialog.blankPreviewDescription")
-                                                : t(`dashboard.templates.${previewTarget.nameKey}.description`)}
+                                                ? "从空白开始创建您的专属简历"
+                                                : previewTarget.description}
                                         </p>
 
                                         <div className="space-y-4">
@@ -399,7 +374,7 @@ export const CreateResumeModal = ({
                                                 className="w-full h-14 text-lg font-bold rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                                 onClick={() => handleCreate(previewTarget)}
                                             >
-                                                {t("dashboard.resumes.createDialog.useThisTemplate")}
+                                                使用此模板
                                                 <Sparkles className="w-5 h-5 ml-2 opacity-70" />
                                             </Button>
                                         </div>

@@ -5,7 +5,6 @@ import { Reorder, useDragControls } from "framer-motion";
 import { GripVertical, Trash2 } from "lucide-react";
 import { Certificate } from "@/types/resume";
 import ThemeModal from "@/components/shared/ThemeModal";
-import { useTranslations } from "@/i18n/compat/client";
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 
@@ -13,7 +12,6 @@ const CertificateItem = ({ certificate }: { certificate: Certificate }) => {
     const { updateCertificate, removeCertificate, setDraggingProjectId } = useResumeStore();
     const dragControls = useDragControls();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const t = useTranslations("workbench.certificatesPanel");
 
     return (
         <Reorder.Item
@@ -52,7 +50,7 @@ const CertificateItem = ({ certificate }: { certificate: Certificate }) => {
                 {/* Content & Actions */}
                 <div className="flex-1 min-w-0 p-4 flex flex-col justify-center gap-3">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{t("width")}: {certificate.width}%</span>
+                        <span className="text-sm font-medium">{"宽度 (横向拼接占比)"}: {certificate.width}%</span>
                         <Button
                             variant="ghost"
                             size="sm"
@@ -73,7 +71,7 @@ const CertificateItem = ({ certificate }: { certificate: Certificate }) => {
             </div>
             <ThemeModal
                 isOpen={deleteDialogOpen}
-                title={t("delete")}
+                title={"删除"}
                 onClose={() => setDeleteDialogOpen(false)}
                 onConfirm={() => {
                     removeCertificate(certificate.id);

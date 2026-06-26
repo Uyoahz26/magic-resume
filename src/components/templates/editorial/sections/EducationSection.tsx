@@ -6,7 +6,6 @@ import SectionTitle from "./SectionTitle";
 import SectionWrapper from "../../shared/SectionWrapper";
 import { normalizeRichTextContent } from "@/lib/richText";
 import { formatDateRange } from "@/lib/utils";
-import { useLocale } from "@/i18n/compat/client";
 
 interface EducationSectionProps {
   education?: Education[];
@@ -15,7 +14,7 @@ interface EducationSectionProps {
 }
 
 const EducationSection: React.FC<EducationSectionProps> = ({ education, globalSettings, showTitle = true }) => {
-  const locale = useLocale();
+  const locale = "zh";
   const visibleEducation = education?.filter((edu) => edu.visible);
   const showTimeline = visibleEducation && visibleEducation.length > 2;
 

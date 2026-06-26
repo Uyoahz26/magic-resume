@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { PlusCircle, GripVertical, Trash2, Eye, EyeOff } from "lucide-react";
 import { Reorder, AnimatePresence, motion } from "framer-motion";
-import { useTranslations } from "@/i18n/compat/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -9,6 +8,7 @@ import PhotoUpload from "@/components/shared/PhotoSelector";
 import IconSelector from "../IconSelector";
 import AlignSelector from "./AlignSelector";
 import Field from "../Field";
+import { BASIC_FIELD_LABELS } from "@/config/labels";
 import { cn } from "@/lib/utils";
 import { DEFAULT_FIELD_ORDER } from "@/config";
 import { useResumeStore } from "@/store/useResumeStore";
@@ -34,7 +34,6 @@ const CustomField: React.FC<CustomFieldProps> = ({
   onDelete,
   onReorderEnd,
 }) => {
-  const t = useTranslations("workbench.basicPanel");
 
   return (
     <Reorder.Item
@@ -78,7 +77,7 @@ const CustomField: React.FC<CustomFieldProps> = ({
               label: value,
             })
           }
-          placeholder={t("customFields.placeholders.label")}
+          placeholder={"标签"}
           className={cn(
             "bg-background/50",
             "border-border",
@@ -94,7 +93,7 @@ const CustomField: React.FC<CustomFieldProps> = ({
               value: value,
             })
           }
-          placeholder={t("customFields.placeholders.value")}
+          placeholder={"值"}
           className={cn(
             "bg-background/50",
             "border-border",
@@ -114,7 +113,7 @@ const CustomField: React.FC<CustomFieldProps> = ({
             }
           />
           <span className="text-xs text-muted-foreground">
-            {t("customFields.displayLabel")}
+            {"显示标签"}
           </span>
         </div>
 
@@ -174,7 +173,6 @@ const BasicPanel: React.FC = () => {
   });
   const basicFieldsRef = useRef(basicFields);
   const customFieldsRef = useRef(customFields);
-  const t = useTranslations("workbench.basicPanel");
 
   useEffect(() => {
     basicFieldsRef.current = basicFields;
@@ -322,7 +320,7 @@ const BasicPanel: React.FC = () => {
               />
             )}
             <div className=" w-[80px] ml-[4px] text-sm font-medium text-foreground">
-              {t(`basicFields.${field.key}`)}
+              {BASIC_FIELD_LABELS[field.key] ?? field.key}
             </div>
             <div className="flex-1">
               <Field
@@ -382,7 +380,7 @@ const BasicPanel: React.FC = () => {
     <div className="space-y-6 p-6">
       <div className="space-y-6">
         <div className="space-y-2">
-          <h2 className="text-lg font-medium">{t("layout")}</h2>
+          <h2 className="text-lg font-medium">{"布局"}</h2>
           <div className=" bg-card rounded-lg">
             <AlignSelector
               value={basic?.layout || "left"}
@@ -398,7 +396,7 @@ const BasicPanel: React.FC = () => {
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium">{t("title")}</h2>
+            <h2 className="text-lg font-medium">{"资料"}</h2>
           </div>
 
           <div className="space-y-4">
@@ -414,7 +412,7 @@ const BasicPanel: React.FC = () => {
               <motion.div className="space-y-6">
                 <motion.div className="space-y-3">
                   <motion.h3 className="font-medium text-neutral-900 dark:text-neutral-200 px-1">
-                    {t("basicField")}
+                    {"基础字段"}
                   </motion.h3>
                   <AnimatePresence mode="popLayout">
                     <Reorder.Group
@@ -431,7 +429,7 @@ const BasicPanel: React.FC = () => {
 
                 <motion.div className="space-y-3">
                   <motion.h3 className="font-medium text-neutral-900 dark:text-neutral-200 px-1">
-                    {t("customField")}
+                    {"自定义字段"}
                   </motion.h3>
                   <AnimatePresence mode="popLayout">
                     <Reorder.Group
@@ -460,7 +458,7 @@ const BasicPanel: React.FC = () => {
                   >
                     <Button onClick={addCustomField} className="w-full mt-4">
                       <PlusCircle className="w-4 h-4 mr-2" />
-                      {t("customFields.addButton")}
+                      {"添加自定义字段"}
                     </Button>
                   </motion.div>
                 </motion.div>
@@ -472,7 +470,7 @@ const BasicPanel: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <motion.h3 className="font-medium text-neutral-900 dark:text-neutral-200 px-1">
-                        {t("githubContributions")}
+                        {"Github贡献"}
                       </motion.h3>
 
                       <Switch

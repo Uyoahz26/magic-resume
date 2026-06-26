@@ -7,10 +7,9 @@ import { cn } from "@/lib/utils";
 
 interface AnimatedImportButtonProps {
     onClick: () => void;
-    t: any;
 }
 
-export const AnimatedImportButton = ({ onClick, t }: AnimatedImportButtonProps) => {
+export const AnimatedImportButton = ({ onClick }: AnimatedImportButtonProps) => {
     const [isHovered, setIsHovered] = React.useState(false);
 
     return (
@@ -51,7 +50,7 @@ export const AnimatedImportButton = ({ onClick, t }: AnimatedImportButtonProps) 
                             </div>
                         </motion.div>
                     </div>
-                    <span className="relative z-10">{t("dashboard.resumes.import")}</span>
+                    <span className="relative z-10">导入简历</span>
                 </div>
             </Button>
         </motion.div>

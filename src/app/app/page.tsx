@@ -1,34 +1,27 @@
-import { Metadata } from "next";
-import { NextIntlClientProvider } from "@/i18n/compat/client";
 import { ReactNode } from "react";
-import { getLocale, getMessages, getTranslations } from "@/i18n/compat/server";
+import { Metadata } from "next";
 import Document from "@/components/Document";
+import { Providers } from "@/app/providers";
+import { Toaster } from "@/components/ui/sonner";
 
 type Props = {
   children: ReactNode;
-  params: { locale: string };
 };
 
-export async function generateMetadata({
-  params: { locale },
-}: Props): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: "common" });
-  return {
-    title: t("title"),
-  };
-}
-export default async function LocaleLayout({ children }: Props) {
-  const locale = await getLocale();
+export const metadata: Metadata = {
+  title: "Magic Resume · 云端简历编辑器",
+};
 
-  const messages = await getMessages();
-
+export default function LocaleLayout({ children }: Props) {
   return (
-    <Document locale={locale}>
-      <NextIntlClientProvider messages={messages}>
+    <Document
+      locale="zh-CN"
+      bodyClassName="overflow-y-hidden w-full"
+    >
+      <Providers>
         {children}
-      </NextIntlClientProvider>
+        <Toaster position="top-center" richColors />
+      </Providers>
     </Document>
   );
 }
-
-export const runtime = "edge";

@@ -1,5 +1,5 @@
 /**
- * 占位 middleware 工厂,与 i18n 兼容层配合使用。
+ * 占位 middleware 工厂。
  */
 
 export function createMiddleware(): {

@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import { BasicInfo, GlobalSettings, getBorderRadiusValue } from "@/types/resume";
 import SectionWrapper from "../../shared/SectionWrapper";
+import { BASIC_FIELD_LABELS } from "@/config/labels";
 import { formatDateString } from "@/lib/utils";
-import { useLocale, useTranslations } from "@/i18n/compat/client";
 import { getCustomFieldDisplayText, getCustomFieldHref, shouldShowCustomFieldLabelPrefix } from "@/lib/customField";
 
 interface BaseInfoProps {
@@ -13,8 +13,7 @@ interface BaseInfoProps {
 }
 
 const BaseInfo: React.FC<BaseInfoProps> = ({ basic, globalSettings }) => {
-  const locale = useLocale();
-  const t = useTranslations("workbench");
+  const locale = "zh";
 
   const getOrderedFields = React.useMemo(() => {
     if (!basic.fieldOrder) {
@@ -126,7 +125,7 @@ const BaseInfo: React.FC<BaseInfoProps> = ({ basic, globalSettings }) => {
                   <div className="min-w-0">
                     {item.key === "email" ? (
                       <a href={`mailto:${item.value}`} className="block min-w-0 transition-colors [overflow-wrap:anywhere] hover:text-black">
-                        {globalSettings?.useIconMode ? "" : `${t(`basicPanel.basicFields.${item.key}`)}: `}
+                        {globalSettings?.useIconMode ? "" : `${BASIC_FIELD_LABELS[item.key] ?? item.key}: `}
                         {item.value}
                       </a>
                     ) : item.key === "website" || item.key === "github" ? (
@@ -146,7 +145,7 @@ const BaseInfo: React.FC<BaseInfoProps> = ({ basic, globalSettings }) => {
                             ? shouldShowCustomFieldLabelPrefix(item)
                               ? `${item.label}: `
                               : ""
-                            : `${t(`basicPanel.basicFields.${item.key}`)}: `}
+                            : `${BASIC_FIELD_LABELS[item.key] ?? item.key}: `}
                         {item.value}
                       </span>
                     )}

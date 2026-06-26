@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CalendarIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { useTranslations } from "@/i18n/compat/client";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -45,7 +44,6 @@ const Field = ({
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [showPolishDialog, setShowPolishDialog] = useState(false);
   const { checkConfiguration } = useAIConfiguration();
-  const t = useTranslations();
 
   const currentDate = useMemo(
     () => (value ? new Date(value) : undefined),
@@ -74,17 +72,17 @@ const Field = ({
   }, [type, currentDate, fromDate]);
 
   const isPresentValue = useMemo(() => {
-    return value === t("field.toPresent") || value.endsWith(` - ${t("field.toPresent")}`);
-  }, [value, t]);
+    return value === "至今" || value.endsWith(" - 至今");
+  }, [value]);
 
   const handlePresentToggle = (checked: boolean) => {
     if (type === "date") {
-      onChange(checked ? t("field.toPresent") : "");
+      onChange(checked ? "至今" : "");
     } else if (type === "date-range") {
       const [start] = value.split(" - ");
       onChange(
         checked
-          ? [start, t("field.toPresent")].filter(Boolean).join(" - ")
+          ? [start, "至今"].filter(Boolean).join(" - ")
           : start || ""
       );
     }
@@ -104,7 +102,7 @@ const Field = ({
               onCheckedChange={handlePresentToggle}
             />
             <span className="text-xs text-muted-foreground">
-              {t("field.toPresent")}
+              {"至今"}
             </span>
           </div>
         )}

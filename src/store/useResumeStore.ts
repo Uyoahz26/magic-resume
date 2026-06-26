@@ -16,9 +16,7 @@ import {
 import { DEFAULT_TEMPLATES } from "@/config";
 import {
   initialResumeState,
-  initialResumeStateEn,
   blankResumeState,
-  blankResumeStateEn,
 } from "@/config/initialResumeData";
 import { generateUUID } from "@/utils/uuid";
 interface ResumeStore {
@@ -235,22 +233,7 @@ export const useResumeStore = create(
       activeResume: null,
 
       createResume: (templateId = null, isBlank = false) => {
-        const locale =
-          typeof document !== "undefined"
-            ? document.cookie
-                .split("; ")
-                .find((row) => row.startsWith("NEXT_LOCALE="))
-                ?.split("=")[1] || "zh"
-            : "zh";
-
-        let initialResumeData: any;
-        if (isBlank) {
-          initialResumeData =
-            locale === "en" ? blankResumeStateEn : blankResumeState;
-        } else {
-          initialResumeData =
-            locale === "en" ? initialResumeStateEn : initialResumeState;
-        }
+        const initialResumeData = isBlank ? blankResumeState : initialResumeState;
 
         const id = generateUUID();
         const template = templateId
@@ -263,10 +246,7 @@ export const useResumeStore = create(
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           templateId: template?.id,
-          title: `${locale === "en" ? "New Resume" : "新建简历"} ${id.slice(
-            0,
-            6
-          )}`,
+          title: `新建简历 ${id.slice(0, 6)}`,
         };
 
         set((state) => ({
@@ -375,21 +355,10 @@ export const useResumeStore = create(
           return "";
         }
 
-        // 获取当前语言环境
-        const locale =
-          typeof document !== "undefined"
-            ? document.cookie
-                .split("; ")
-                .find((row) => row.startsWith("NEXT_LOCALE="))
-                ?.split("=")[1] || "zh"
-            : "zh";
-
         const duplicatedResume = {
           ...structuredClone(originalResume),
           id: newId,
-          title: `${originalResume.title} (${
-            locale === "en" ? "Copy" : "复制"
-          })`,
+          title: `${originalResume.title} (复制)`,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };

@@ -3,7 +3,6 @@ import { motion, Reorder, useDragControls } from "framer-motion";
 import { Eye, EyeOff, GripVertical, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MenuSection } from "@/types/resume";
-import { useTranslations } from "@/i18n/compat/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,7 +37,6 @@ const LayoutItem = ({
   menuSections
 }: LayoutItemProps) => {
   const dragControls = useDragControls();
-  const t = useTranslations("common");
 
   if (isBasic) {
     return (
@@ -153,13 +151,13 @@ const LayoutItem = ({
             </AlertDialogTrigger>
             <AlertDialogContent onClick={(e) => e.stopPropagation()}>
               <AlertDialogHeader>
-                <AlertDialogTitle>{t("delete")} {item.title}</AlertDialogTitle>
+                <AlertDialogTitle>{"删除"} {item.title}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  {t("deleteModuleConfirm")}
+                  {"确定要删除此模块吗？此操作无法撤销。"}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>{"取消"}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={(e) => {
                     e.stopPropagation();
@@ -182,7 +180,7 @@ const LayoutItem = ({
                   }}
                   className="bg-gradient-to-r from-rose-500 to-orange-400 hover:from-rose-600 hover:to-orange-500 text-white shadow-sm border-0"
                 >
-                  {t("confirm")}
+                  {"确认"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

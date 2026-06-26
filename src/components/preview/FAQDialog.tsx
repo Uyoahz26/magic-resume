@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/accordion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FAQ_KEYS } from "@/config/faq";
+import { FAQ_ITEMS } from "@/config/labels";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "@/i18n/compat/client";
 
 const DynamicHelpIcon = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
   (props, ref) => (
@@ -127,7 +127,6 @@ DynamicHelpIcon.displayName = "DynamicHelpIcon";
 
 export const FAQDialog = () => {
   const [open, setOpen] = useState(false);
-  const t = useTranslations("faqDialog");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -139,7 +138,7 @@ export const FAQDialog = () => {
             </DialogTrigger>
           </TooltipTrigger>
           <TooltipContent side="left" sideOffset={16}>
-            <p>{t("title")}</p>
+            <p>{"常见问题 (FAQ)"}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -150,10 +149,10 @@ export const FAQDialog = () => {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
               <HelpCircle className="h-5 w-5" />
             </div>
-             {t("title")}
+             {"常见问题 (FAQ)"}
           </DialogTitle>
           <DialogDescription>
-            {t("description")}
+            {"关于 Magic Resume 工作台的一些常用技巧和解答。"}
           </DialogDescription>
         </DialogHeader>
 
@@ -162,10 +161,10 @@ export const FAQDialog = () => {
             {FAQ_KEYS.map((key) => (
               <AccordionItem key={key} value={key}>
                 <AccordionTrigger className="text-left text-[15px] font-medium">
-                  {t(`items.${key}.question`)}
+                  {FAQ_ITEMS[key]?.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                  {t(`items.${key}.answer`)}
+                  {FAQ_ITEMS[key]?.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}

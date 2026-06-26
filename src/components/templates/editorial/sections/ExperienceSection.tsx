@@ -6,7 +6,6 @@ import SectionTitle from "./SectionTitle";
 import SectionWrapper from "../../shared/SectionWrapper";
 import { normalizeRichTextContent } from "@/lib/richText";
 import { formatDateString } from "@/lib/utils";
-import { useLocale } from "@/i18n/compat/client";
 
 interface ExperienceSectionProps {
   experiences?: Experience[];
@@ -15,7 +14,7 @@ interface ExperienceSectionProps {
 }
 
 const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experiences, globalSettings, showTitle = true }) => {
-  const locale = useLocale();
+  const locale = "zh";
   const visibleExperiences = experiences?.filter((exp) => exp.visible);
   const showTimeline = visibleExperiences && visibleExperiences.length > 2;
 

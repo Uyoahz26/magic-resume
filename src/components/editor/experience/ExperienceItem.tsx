@@ -12,7 +12,6 @@ import Field from "../Field";
 import { Experience } from "@/types/resume";
 import ThemeModal from "@/components/shared/ThemeModal";
 import { useResumeStore } from "@/store/useResumeStore";
-import { useTranslations } from "@/i18n/compat/client";
 
 interface ProjectEditorProps {
   experience: Experience;
@@ -25,7 +24,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
   experience,
   onSave,
 }) => {
-  const t = useTranslations("workbench.experienceItem");
 
   const handleChange = (field: keyof Experience, value: string) => {
     onSave({
@@ -39,32 +37,32 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
       <div className="grid gap-5">
         <div className="grid grid-cols-2 gap-4">
           <Field
-            label={t("labels.company")}
+            label={"公司名称"}
             value={experience.company}
             onChange={(value) => handleChange("company", value)}
-            placeholder={t("placeholders.company")}
+            placeholder={"请输入公司名称"}
           />
           <Field
-            label={t("labels.position")}
+            label={"岗位"}
             value={experience.position}
             onChange={(value) => handleChange("position", value)}
-            placeholder={t("placeholders.position")}
+            placeholder={"如：前端工程师"}
           />
         </div>
         <Field
-          label={t("labels.date")}
+          label={"工作时间"}
           value={experience.date}
           onChange={(value) => handleChange("date", value)}
           type="date-range"
-          placeholder={t("placeholders.date")}
+          placeholder={"如：2020-至今"}
           showPresentSwitch={true}
         />
         <Field
-          label={t("labels.details")}
+          label={"工作职责"}
           value={experience.details}
           onChange={(value) => handleChange("details", value)}
           type="editor"
-          placeholder={t("placeholders.details")}
+          placeholder={"描述你在这份工作中的职责和成就"}
         />
       </div>
     </div>

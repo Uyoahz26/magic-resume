@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslations } from "@/i18n/compat/client";
 import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
 import { createMarkdownExit } from "markdown-exit";
@@ -29,14 +28,12 @@ interface AIPolishDialogProps {
   onApply: (content: string) => void;
 }
 
-// markdown-exit 实例，用于将 AI 返回的 Markdown 转换为 Tiptap 兼容的 HTML
 const md = createMarkdownExit({
-  html: true,       // 允许 HTML 标签透传
-  breaks: true,     // 将换行符转换为 <br>
-  linkify: false,   // 简历内容不需要自动识别链接
+  html: true,
+  breaks: true,
+  linkify: false,
 });
 
-// turndown 实例，用于将 Tiptap HTML 转换为 Markdown 发给 AI
 const turndownService = new TurndownService({
   headingStyle: "atx",
   bulletListMarker: "-",
@@ -48,7 +45,6 @@ export default function AIPolishDialog({
   content,
   onApply
 }: AIPolishDialogProps) {
-  const t = useTranslations("aiPolishDialog");
   const [isPolishing, setIsPolishing] = useState(false);
   const [polishedContent, setPolishedContent] = useState("");
   const [customInstructions, setCustomInstructions] = useState("");
@@ -69,7 +65,7 @@ export default function AIPolishDialog({
   const polishedContentRef = useRef<HTMLDivElement>(null);
 
   const getPolishErrorMessage = async (response: Response) => {
-    const fallback = `${t("error.polishFailed")} (${response.status})`;
+    const fallback = `润色失败 (${response.status})`;
 
     try {
       const contentType = response.headers.get("content-type") || "";
@@ -114,7 +110,7 @@ export default function AIPolishDialog({
   const handlePolish = async () => {
     try {
       if (!isConfigured()) {
-        toast.error(t("error.configRequired"));
+        toast.error("请先配置 AI 设置");
         return;
       }
 
@@ -182,13 +178,12 @@ export default function AIPolishDialog({
         return;
       }
       console.error("Polish error:", error);
-      toast.error(error instanceof Error ? error.message : t("error.polishFailed"));
+      toast.error(error instanceof Error ? error.message : "润色失败");
     } finally {
       setIsPolishing(false);
     }
   };
 
-  // 自动滚动到底部
   useEffect(() => {
     if (polishedContent && polishedContentRef.current) {
       const container = polishedContentRef.current;
@@ -222,7 +217,7 @@ export default function AIPolishDialog({
     const htmlContent = md.render(polishedContent);
     onApply(htmlContent);
     handleClose();
-    toast.success(t("error.applied"));
+    toast.success("已应用");
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -263,7 +258,7 @@ export default function AIPolishDialog({
                 "dark:text-primary-400"
               )}
             />
-            {t("title")}
+            AI 润色
           </DialogTitle>
           <DialogDescription
             className={cn(
@@ -272,10 +267,10 @@ export default function AIPolishDialog({
             )}
           >
             {isPolishing
-              ? t("description.polishing")
+              ? "正在润色中..."
               : polishedContent
-                ? t("description.finished")
-                : t("description.ready")}
+                ? "润色完成，可以预览或重新生成"
+                : "输入自定义指令，让 AI 帮助您优化简历内容"}
           </DialogDescription>
         </DialogHeader>
 
@@ -287,11 +282,11 @@ export default function AIPolishDialog({
               "text-neutral-600 dark:text-neutral-400"
             )}
           >
-            {t("customInstructions")}
+            自定义指令（可选）
           </Label>
           <Textarea
             id="custom-instructions"
-            placeholder={t("customInstructionsPlaceholder")}
+            placeholder="例如：让语句更简洁、突出成就、使用专业术语..."
             value={customInstructions}
             onChange={(e) => setCustomInstructions(e.target.value)}
             disabled={isPolishing}
@@ -321,7 +316,7 @@ export default function AIPolishDialog({
                   "text-neutral-600 dark:text-neutral-400"
                 )}
               >
-                {t("content.original")}
+                原文
               </span>
             </div>
             <div
@@ -357,7 +352,7 @@ export default function AIPolishDialog({
                   "text-primary dark:text-primary-400"
                 )}
               >
-                {t("content.polished")}
+                润色后
               </span>
             </div>
             <div
@@ -392,12 +387,12 @@ export default function AIPolishDialog({
             {isPolishing ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {t("button.generating")}
+                生成中...
               </div>
             ) : !polishedContent ? (
-              t("button.start")
+              "开始润色"
             ) : (
-              t("button.regenerate")
+              "重新生成"
             )}
           </Button>
 
@@ -406,7 +401,7 @@ export default function AIPolishDialog({
             disabled={!polishedContent || isPolishing}
             className="flex-1 bg-primary hover:bg-primary/90 text-white h-11 shadow-lg shadow-primary/20"
           >
-            {t("button.apply")}
+            应用
           </Button>
         </DialogFooter>
       </DialogContent>

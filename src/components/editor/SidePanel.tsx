@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Layout, Type, SpaceIcon, Palette, Zap } from "lucide-react";
 import debounce from "lodash/debounce";
-import { useTranslations } from "@/i18n/compat/client";
 import {
   Select,
   SelectContent,
@@ -27,6 +26,7 @@ import {
 } from "@/components/ui/popover";
 import { Plus } from "lucide-react";
 import { STANDARD_MODULES } from "@/config/modules";
+import { SECTION_LABELS } from "@/config/labels";
 import { DEFAULT_TEMPLATES } from "@/config";
 import { getFontOptions, normalizeFontFamily } from "@/utils/fonts";
 
@@ -94,7 +94,6 @@ export function SidePanel({
   } = activeResume || {};
 
   const { themeColor = THEME_COLORS[0] } = globalSettings;
-  const t = useTranslations("workbench.sidePanel");
 
   const currentTemplate = DEFAULT_TEMPLATES.find(
     (t) => t.id === activeResume?.templateId
@@ -114,14 +113,8 @@ export function SidePanel({
     return availableModules.filter((m) => !existingIds.has(m.id));
   }, [availableModules, menuSections]);
 
-  const fontOptions = getFontOptions((key) => t(`typography.font.${key}`));
+  const fontOptions = getFontOptions();
   const selectedFontFamily = normalizeFontFamily(globalSettings?.fontFamily);
-
-  const lineHeightOptions = [
-    { value: "normal", label: t("typography.lineHeight.normal") },
-    { value: "relaxed", label: t("typography.lineHeight.relaxed") },
-    { value: "loose", label: t("typography.lineHeight.loose") },
-  ];
 
   const debouncedSetColor = useMemo(
     () =>
@@ -173,7 +166,7 @@ export function SidePanel({
       animate={{ x: 0, opacity: 1 }}
     >
       <div className="p-4 space-y-4">
-        <SettingCard icon={Layout} title={t("layout.title")}>
+        <SettingCard icon={Layout} title={"布局"}>
           <LayoutSetting
             menuSections={menuSections}
             activeSection={activeSection || ""}
@@ -193,7 +186,7 @@ export function SidePanel({
                   className="flex justify-center w-full rounded-lg items-center gap-2 py-2 px-3 text-sm font-medium text-primary bg-primary/5 border border-dashed border-primary/20 hover:bg-primary/10 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
-                  {t("layout.addCustomSection")}
+                  {"添加模块"}
                 </motion.button>
               </PopoverTrigger>
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-1" align="center">
@@ -205,7 +198,7 @@ export function SidePanel({
                       onClick={() => {
                         const newSection = {
                           id: section.id,
-                          title: t(`layout.standardSections.${section.titleKey}`),
+                          title: SECTION_LABELS[section.titleKey] ?? section.titleKey,
                           icon: section.icon,
                           enabled: true,
                           order: menuSections.length,
@@ -217,7 +210,7 @@ export function SidePanel({
                       className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors text-left"
                     >
                       <span className="text-lg">{section.icon}</span>
-                      <span>{t(`layout.standardSections.${section.titleKey}`)}</span>
+                      <span>{SECTION_LABELS[section.titleKey] ?? section.titleKey}</span>
                     </button>
                   ))}
 
@@ -232,7 +225,7 @@ export function SidePanel({
                     className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors text-left text-muted-foreground italic"
                   >
                     <Plus className="w-4 h-4" />
-                    {t("layout.addCustomSectionOption")}
+                    {"添加自定义模块"}
                   </button>
                 </div>
               </PopoverContent>
@@ -243,7 +236,7 @@ export function SidePanel({
         {/* 主题色设置  */}
         <SettingCard
           icon={Palette}
-          title={t("theme.title")}
+          title={"主题色"}
           action={
             <ColorPicker
               value={themeColor}
@@ -255,10 +248,10 @@ export function SidePanel({
                   : "border-border text-muted-foreground bg-transparent hover:bg-accent/50 hover:text-foreground"
               )}
               style={{ backgroundColor: "transparent" }}
-              title={t("theme.custom")}
+              title={"自定义"}
             >
               <Palette className="w-3.5 h-3.5" />
-              <span className="text-xs font-medium">{t("theme.custom")}</span>
+              <span className="text-xs font-medium">{"自定义"}</span>
 
               {!THEME_COLORS.includes(themeColor) && (
                 <div
@@ -292,11 +285,11 @@ export function SidePanel({
         </SettingCard>
 
         {/* 排版设置 */}
-        <SettingCard icon={Type} title={t("typography.title")}>
+        <SettingCard icon={Type} title={"排版"}>
           <div className="space-y-6">
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t('typography.font.title')}
+                {"字体"}
               </Label>
               <Select
                 value={selectedFontFamily}
@@ -329,14 +322,14 @@ export function SidePanel({
                 </SelectContent>
               </Select>
               <p className="text-xs leading-5 text-muted-foreground">
-                {t("typography.font.note")}
+                {"MiSans 依据其许可免费商用；使用本项目时请保留 MiSans 字体说明。"}
               </p>
             </div>
 
             {/* 行高选择 */}
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("typography.lineHeight.title")}
+                {"行高"}
               </Label>
               <div className="flex items-center gap-4">
                 <Slider
@@ -356,7 +349,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("typography.baseFontSize.title")}
+                {"基础字号"}
               </Label>
               <Select
                 value={globalSettings?.baseFontSize?.toString()}
@@ -392,7 +385,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("typography.headerSize.title")}
+                {"模块标题字号"}
               </Label>
               <Select
                 value={globalSettings?.headerSize?.toString()}
@@ -428,7 +421,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("typography.subheaderSize.title")}
+                {"模块项一级标题字号"}
               </Label>
               <Select
                 value={globalSettings?.subheaderSize?.toString()}
@@ -465,11 +458,11 @@ export function SidePanel({
         </SettingCard>
 
         {/* 间距设置 */}
-        <SettingCard icon={SpaceIcon} title={t("spacing.title")}>
+        <SettingCard icon={SpaceIcon} title={"间距"}>
           <div className="space-y-6">
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("spacing.pagePadding.title")}
+                {"页边距"}
               </Label>
               <div className="flex items-center gap-4">
                 <Slider
@@ -564,7 +557,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("spacing.sectionSpacing.title")}
+                {"模块间距"}
               </Label>
               <div className="flex items-center gap-4">
                 <Slider
@@ -661,7 +654,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("spacing.paragraphSpacing.title")}
+                {"段落间距"}
               </Label>
               <div className="flex items-center gap-4">
                 <Slider
@@ -759,11 +752,11 @@ export function SidePanel({
         </SettingCard>
 
         {/* 模式设置 */}
-        <SettingCard icon={Zap} title={t("mode.title")}>
+        <SettingCard icon={Zap} title={"模式"}>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("mode.useIconMode.title")}
+                {"图标模式"}
               </Label>
               <div className="flex items-center gap-4">
                 <Switch
@@ -779,7 +772,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("mode.centerSubtitle.title")}
+                {"副标题居中"}
               </Label>
               <div className="flex items-center gap-4">
                 <Switch
@@ -795,7 +788,7 @@ export function SidePanel({
 
             <div className="space-y-2">
               <Label className="text-muted-foreground">
-                {t("mode.flexibleHeaderLayout.title")}
+                {"长标题模式"}
               </Label>
               <div className="flex items-center gap-4">
                 <Switch

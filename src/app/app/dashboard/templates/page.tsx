@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocale, useTranslations } from "@/i18n/compat/client";
 import { motion } from "framer-motion";
 import { useRouter } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -10,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ResumeTemplateComponent from "@/components/templates";
-import { initialResumeState, initialResumeStateEn } from "@/config/initialResumeData";
+import { initialResumeState } from "@/config/initialResumeData";
 import type { ResumeTemplate } from "@/types/template";
 import { normalizeFontFamily } from "@/utils/fonts";
 
@@ -28,12 +27,7 @@ const PRESET_COLORS = [
   { name: "black", value: "#000000" },
 ];
 
-const getTemplateKey = (templateId: string) =>
-  templateId === "left-right" ? "leftRight" : templateId;
-
-type TemplatePreviewBaseData =
-  | typeof initialResumeState
-  | typeof initialResumeStateEn;
+type TemplatePreviewBaseData = typeof initialResumeState;
 
 const buildTemplatePreviewData = (
   baseData: TemplatePreviewBaseData,
@@ -61,27 +55,19 @@ const buildTemplatePreviewData = (
 interface TemplateCardItemProps {
   index: number;
   template: ResumeTemplate;
-  templateName: string;
-  templateDescription: string;
   baseData: TemplatePreviewBaseData;
   selectedColor: string;
   onPreview: () => void;
   onUseTemplate: () => void;
-  previewLabel: string;
-  useTemplateLabel: string;
 }
 
 const TemplateCardItem = ({
   index,
   template,
-  templateName,
-  templateDescription,
   baseData,
   selectedColor,
   onPreview,
   onUseTemplate,
-  previewLabel,
-  useTemplateLabel,
 }: TemplateCardItemProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.24);
@@ -151,10 +137,10 @@ const TemplateCardItem = ({
           <div className="absolute inset-x-0 bottom-0 pt-12 pb-3 px-4 flex items-end border-t border-transparent z-10 transition-colors group-hover:bg-white/50 dark:group-hover:bg-gray-950/50">
             <div className="flex flex-col w-full">
               <span className="text-[15px] font-semibold truncate text-gray-900 dark:text-gray-100 drop-shadow-sm">
-                {templateName}
+                {template.name}
               </span>
               <span className="text-[11px] text-gray-600 dark:text-gray-300 mt-0.5 font-medium truncate">
-                {templateDescription}
+                {template.description}
               </span>
             </div>
           </div>
@@ -176,7 +162,7 @@ const TemplateCardItem = ({
                   onPreview();
                 }}
               >
-                {previewLabel}
+                预览
               </Button>
             </motion.div>
 
@@ -193,7 +179,7 @@ const TemplateCardItem = ({
                   onUseTemplate();
                 }}
               >
-                {useTemplateLabel}
+                使用模板
               </Button>
             </motion.div>
           </div>
@@ -204,13 +190,13 @@ const TemplateCardItem = ({
 };
 
 const TemplatesPage = () => {
-  const t = useTranslations("dashboard.templates");
-  const locale = useLocale();
   const router = useRouter();
   const createResume = useResumeStore((state) => state.createResume);
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>(PRESET_COLORS[0].value);
   const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const baseData = initialResumeState;
 
   useEffect(() => {
     let currentIndex = 0;
@@ -235,7 +221,6 @@ const TemplatesPage = () => {
     }
   };
 
-  const baseData = locale === "en" ? initialResumeStateEn : initialResumeState;
   const activePreviewTemplate =
     DEFAULT_TEMPLATES.find((template) => template.id === previewTemplate) ??
     null;
@@ -272,7 +257,7 @@ const TemplatesPage = () => {
       <div className="w-full max-w-[1600px] mx-auto py-8 px-4 sm:px-6">
         <div className="flex flex-col space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
+            <h2 className="text-3xl font-bold tracking-tight">简历模板</h2>
 
             <div className="flex items-center space-x-2 bg-gray-50/50 dark:bg-gray-900/50 p-2 rounded-full border border-gray-100 dark:border-gray-800 backdrop-blur-sm self-start sm:self-auto overflow-x-auto">
               {PRESET_COLORS.map((color) => (
@@ -307,20 +292,15 @@ const TemplatesPage = () => {
 
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
             {DEFAULT_TEMPLATES.map((template, index) => {
-              const templateKey = getTemplateKey(template.id);
               return (
                 <TemplateCardItem
                   key={template.id}
                   index={index}
                   template={template}
-                  templateName={t(`${templateKey}.name`)}
-                  templateDescription={t(`${templateKey}.description`)}
                   baseData={baseData}
                   selectedColor={selectedColor}
                   onPreview={() => setPreviewTemplate(template.id)}
                   onUseTemplate={() => handleCreateResume(template.id)}
-                  previewLabel={t("preview")}
-                  useTemplateLabel={t("useTemplate")}
                 />
               );
             })}
@@ -337,7 +317,7 @@ const TemplatesPage = () => {
                 <div className="flex flex-col">
                   <div className="border-b border-gray-100 dark:border-gray-800 px-4 py-4">
                     <DialogTitle className="text-lg font-medium">
-                      {t(`${getTemplateKey(activePreviewTemplate.id)}.name`)}
+                      {activePreviewTemplate.name}
                     </DialogTitle>
                   </div>
                   <div className="overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-950 py-8 pointer-events-none">
@@ -384,7 +364,7 @@ const TemplatesPage = () => {
                         handleCreateResume(templateId);
                       }}
                     >
-                      {t("useTemplate")}
+                      使用模板
                     </Button>
                   </div>
                 </div>

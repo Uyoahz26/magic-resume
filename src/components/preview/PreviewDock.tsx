@@ -16,7 +16,6 @@ import {
 import { RiMarkdownLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useTranslations } from "@/i18n/compat/client";
 import { useRouter } from "@/lib/navigation";
 import { Dock, DockIcon } from "@/components/magicui/dock";
 import { Button } from "@/components/ui/button";
@@ -90,7 +89,6 @@ const PreviewDock = ({
   resumeContentRef
 }: PreviewDockProps) => {
   const router = useRouter();
-  const t = useTranslations("previewDock");
   const { checkGrammar, isChecking } = useGrammarCheck();
 
   const {
@@ -120,19 +118,19 @@ const PreviewDock = ({
       const previewContent =
         resumeContentRef.current || document.getElementById("resume-preview");
       if (!previewContent) {
-        toast.error(t("grammarCheck.errorToast"));
+        toast.error("语法检查失败，请重试");
         return;
       }
 
       const text = previewContent.innerText?.trim();
       if (!text) {
-        toast.error(t("grammarCheck.errorToast"));
+        toast.error("语法检查失败，请重试");
         return;
       }
 
       await checkGrammar(text);
     } catch (error) {
-      toast.error(t("grammarCheck.errorToast"));
+      toast.error("语法检查失败，请重试");
     }
   }, [resumeContentRef, checkConfiguration, checkGrammar, t]);
 
@@ -146,7 +144,7 @@ const PreviewDock = ({
       const newId = duplicateResume(activeResumeId);
       const targetPath = `/app/workbench/${newId}`;
       setActiveResume(newId);
-      toast.success(t("copyResume.success"));
+      toast.success("简历复制成功");
       router.push({ to: "/app/workbench/$id", params: { id: newId } });
 
       requestAnimationFrame(() => {
@@ -155,7 +153,7 @@ const PreviewDock = ({
         }
       });
     } catch (error) {
-      toast.error(t("copyResume.error"));
+      toast.error("简历复制失败");
     }
   }, [activeResumeId, duplicateResume, router, setActiveResume, t]);
 
@@ -178,7 +176,7 @@ const PreviewDock = ({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
-                    <p>{t("switchTemplate")}</p>
+                    <p>{"切换模板"}</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -202,8 +200,8 @@ const PreviewDock = ({
                   <TooltipContent side="left" sideOffset={10}>
                     <p>
                       {isChecking
-                        ? t("grammarCheck.checking")
-                        : t("grammarCheck.idle")}
+                        ? "检查中..."
+                        : "AI语法纠错"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -226,8 +224,8 @@ const PreviewDock = ({
                         updateGlobalSettings({ autoOnePage: !globalSettings?.autoOnePage });
                         toast.success(
                           globalSettings?.autoOnePage
-                            ? t("autoOnePage.disabled")
-                            : t("autoOnePage.enabled")
+                            ? "已关闭一页纸模式"
+                            : "已开启一页纸模式"
                         );
                       }}
                     >
@@ -235,7 +233,7 @@ const PreviewDock = ({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
-                    <p>{t("autoOnePage.tooltip")}</p>
+                    <p>{"自动一页纸"}</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -255,7 +253,7 @@ const PreviewDock = ({
                     </TooltipTrigger>
                   </PdfExport>
                   <TooltipContent side="left" sideOffset={10}>
-                    <p>{t("export.tooltip")}</p>
+                    <p>{"导出简历"}</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -273,7 +271,7 @@ const PreviewDock = ({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
-                    <p>{t("copyResume.tooltip")}</p>
+                    <p>{"复制简历"}</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -301,8 +299,8 @@ const PreviewDock = ({
                   <TooltipContent side="left" sideOffset={10}>
                     <p>
                       {sidePanelCollapsed
-                        ? t("sidePanel.expand")
-                        : t("sidePanel.collapse")}
+                        ? "展开侧边栏"
+                        : "收起侧边栏"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -328,8 +326,8 @@ const PreviewDock = ({
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
                     {editPanelCollapsed
-                      ? t("editPanel.expand")
-                      : t("editPanel.collapse")}
+                      ? "展开编辑面板"
+                      : "收起编辑面板"}
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -354,8 +352,8 @@ const PreviewDock = ({
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
                     {previewPanelCollapsed
-                      ? t("previewPanel.expand")
-                      : t("previewPanel.collapse")}
+                      ? "展开预览面板"
+                      : "收起预览面板"}
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -375,7 +373,7 @@ const PreviewDock = ({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
-                    <p>{t("backToDashboard")}</p>
+                    <p>{"返回仪表盘"}</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -394,7 +392,7 @@ const PreviewDock = ({
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="left" sideOffset={10}>
-                    <p>{t("github")}</p>
+                    <p>{"GitHub"}</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>

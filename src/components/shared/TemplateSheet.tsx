@@ -1,6 +1,5 @@
 import { ImageIcon, Layout, PanelsLeftBottom } from "lucide-react";
 import { motion } from "framer-motion";
-import { useTranslations, useLocale } from "@/i18n/compat/client";
 import {
   Sheet,
   SheetContent,
@@ -71,10 +70,8 @@ const TemplatePreview = ({
 };
 
 const TemplateSheet = () => {
-  const t = useTranslations("templates");
-  const locale = useLocale();
   const { activeResume, setTemplate } = useResumeStore();
-  const { snapshotMap } = useTemplateSnapshots(locale);
+  const { snapshotMap } = useTemplateSnapshots("zh");
 
   const currentTemplate =
     DEFAULT_TEMPLATES.find((template) => template.id === activeResume?.templateId) ||
@@ -87,7 +84,7 @@ const TemplateSheet = () => {
       </SheetTrigger>
       <SheetContent side="left" forceMount className="w-1/2 sm:max-w-1/2">
         <SheetHeader>
-          <SheetTitle>{t("switchTemplate")}</SheetTitle>
+          <SheetTitle>切换模板</SheetTitle>
         </SheetHeader>
         <SheetDescription />
 

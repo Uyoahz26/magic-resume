@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Upload, X } from "lucide-react";
-import { useTranslations } from "@/i18n/compat/client";
 import { toast } from "sonner";
 import { compressImage, estimateBase64Size } from "@/utils/imageUtils";
 import {
@@ -45,7 +44,6 @@ const PhotoConfigDrawer: React.FC<Props> = ({
   onConfigChange,
   ...props
 }) => {
-  const t = useTranslations("photoConfig");
   const { updateBasicInfo } = useResumeStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(photo);
@@ -92,7 +90,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
 
   const handleFile = async (file: File) => {
     if (!file.type.startsWith("image/")) {
-      toast.error(t("upload.typeLimit"));
+      toast.error("请上传图片文件");
       return;
     }
 
@@ -118,11 +116,10 @@ const PhotoConfigDrawer: React.FC<Props> = ({
             ).toFixed(2)}KB`
           );
         } catch (error) {
-          toast.error(t("upload.sizeLimit"));
+          toast.error("图片大小不能超过 2MB");
           return;
         }
       } else {
-        // 如果图片小于2MB，但仍然进行轻度压缩以优化性能
         imageData = await compressImage(file, 1200, 1200, 0.8);
       }
 
@@ -132,7 +129,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
         photo: imageData,
       });
     } catch (error) {
-      toast.error(t("upload.error"));
+      toast.error("图片上传失败");
     }
   };
 
@@ -157,7 +154,6 @@ const PhotoConfigDrawer: React.FC<Props> = ({
       const img = new Image();
       img.crossOrigin = "anonymous";
 
-      // 检查图片大小
       const checkImageSize = () => {
         return new Promise<void>((resolve, reject) => {
           fetch(proxyUrl, { method: "HEAD" })
@@ -166,24 +162,22 @@ const PhotoConfigDrawer: React.FC<Props> = ({
               if (contentLength) {
                 const size = parseInt(contentLength, 10);
                 if (size > 2 * 1024 * 1024) {
-                  reject(new Error(t("upload.sizeLimit")));
+                  reject(new Error("图片大小不能超过 2MB"));
                 }
               }
               resolve();
             })
             .catch(() => {
-              // 如果无法获取大小，则继续尝试加载图片
               resolve();
             });
         });
       };
 
-      // 先检查图片大小
       await checkImageSize();
 
       await new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
-          reject(new Error(t("upload.timeout")));
+          reject(new Error("图片加载超时"));
         }, 10000);
 
         img.onload = () => {
@@ -192,7 +186,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
         };
         img.onerror = () => {
           clearTimeout(timer);
-          reject(new Error(t("upload.loadError")));
+          reject(new Error("图片加载失败"));
         };
         img.src = proxyUrl;
       });
@@ -203,11 +197,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
       });
       onPhotoChange(url, config);
     } catch (error) {
-      toast.error(
-        t("upload.invalidUrl", {
-          defaultMessage: "图片链接无效或无法访问，请尝试使用其他图片链接",
-        })
-      );
+      toast.error("图片链接无效或无法访问，请尝试使用其他图片链接");
       handleRemovePhoto();
     }
   };
@@ -331,7 +321,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
       >
         <div className="mx-auto w-full max-w-md overflow-y-auto">
           <DrawerHeader>
-            <DrawerTitle className="text-center">{t("title")}</DrawerTitle>
+            <DrawerTitle className="text-center">头像设置</DrawerTitle>
             <DrawerDescription></DrawerDescription>
           </DrawerHeader>
           <div
@@ -394,18 +384,18 @@ const PhotoConfigDrawer: React.FC<Props> = ({
             />
           </div>
           <div className="p-6 space-y-6">
-            <span className="text-sm">{t("upload.dragHint")}</span>
+            <span className="text-sm">拖拽或点击上传图片</span>
             <span className="ml-2 text-xs text-neutral-500 mt-1">
-              ({t("upload.sizeLimit")})
+              (图片大小不能超过 2MB)
             </span>
           </div>
           <div className="p-6 space-y-6">
             <div className="space-y-3">
-              <h3 className="text-sm font-medium">{t("upload.title")}</h3>
+              <h3 className="text-sm font-medium">或输入图片链接</h3>
               <Textarea
                 value={imageUrl}
                 onChange={(e) => handleUrlChange(e.target.value)}
-                placeholder={t("upload.urlPlaceholder")}
+                placeholder="https://example.com/photo.jpg"
                 className={cn(
                   "h-9",
                   "dark:bg-neutral-800 dark:border-neutral-700"
@@ -415,7 +405,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
 
             <div className="space-y-4">
               <div className="space-y-3">
-                <h3 className="text-sm font-medium">{t("config.size")}</h3>
+                <h3 className="text-sm font-medium">尺寸</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
                     <Input
@@ -428,7 +418,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
                       )}
                       min={24}
                       max={200}
-                      placeholder={t("config.widthPlaceholder")}
+                      placeholder="宽度"
                     />
                     <div
                       className={cn(
@@ -450,7 +440,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
                       )}
                       min={24}
                       max={200}
-                      placeholder={t("config.heightPlaceholder")}
+                      placeholder="高度"
                     />
                     <div
                       className={cn(
@@ -466,7 +456,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
 
               <div className="space-y-3">
                 <h3 className="text-sm font-medium">
-                  {t("config.aspectRatio")}
+                  宽高比
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {(["1:1", "4:3", "3:4", "16:9", "custom"] as const).map(
@@ -488,7 +478,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
                           }
                         }}
                       >
-                        {ratio === "custom" ? t("config.ratios.custom") : ratio}
+                        {ratio === "custom" ? "自定义" : ratio}
                       </Button>
                     )
                   )}
@@ -497,7 +487,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
 
               <div className="space-y-3">
                 <h3 className="text-sm font-medium">
-                  {t("config.border-radius")}
+                  圆角
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {(["none", "medium", "full", "custom"] as const).map(
@@ -513,12 +503,12 @@ const PhotoConfigDrawer: React.FC<Props> = ({
                         }
                       >
                         {radius === "none"
-                          ? t("config.borderRadius.none")
+                          ? "无"
                           : radius === "medium"
-                          ? t("config.borderRadius.medium")
+                          ? "中"
                           : radius === "full"
-                          ? t("config.borderRadius.full")
-                          : t("config.borderRadius.custom")}
+                          ? "圆"
+                          : "自定义"}
                       </Button>
                     )
                   )}
@@ -533,7 +523,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
                       className={cn("h-9 mt-2", "dark:bg-neutral-800")}
                       min={0}
                       max={Math.min(config.width, config.height) / 2}
-                      placeholder={t("config.borderRadius.customPlaceholder")}
+                      placeholder="圆角值"
                     />
                   )}
                 </div>
@@ -549,7 +539,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
                   onClick={handleSave}
                   variant="destructive"
                 >
-                  {t("actions.close")}
+                  关闭
                 </Button>
               </DrawerClose>
             </div>

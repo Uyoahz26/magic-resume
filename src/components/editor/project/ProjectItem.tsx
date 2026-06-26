@@ -11,7 +11,6 @@ import { ChevronDown, Eye, EyeOff, GripVertical, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import Field from "../Field";
 import ThemeModal from "@/components/shared/ThemeModal";
-import { useTranslations } from "@/i18n/compat/client";
 import { Project } from "@/types/resume";
 import { Input } from "@/components/ui/input";
 
@@ -23,7 +22,6 @@ interface ProjectEditorProps {
 }
 
 const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, onSave }) => {
-  const t = useTranslations("workbench.projectItem");
   const handleChange = (field: keyof Project, value: string) => {
     onSave({
       ...project,
@@ -36,66 +34,66 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, onSave }) => {
       <div className="grid gap-5">
         <div className="grid gap-4 md:grid-cols-2">
           <Field
-            label={t("labels.name")}
+            label={"项目名称"}
             value={project.name}
             onChange={(value) => handleChange("name", value)}
-            placeholder={t("placeholders.name")}
+            placeholder={"请输入项目名称"}
           />
           <Field
-            label={t("labels.role")}
+            label={"项目角色"}
             value={project.role}
             onChange={(value) => handleChange("role", value)}
-            placeholder={t("placeholders.role")}
+            placeholder={"你在项目中的角色"}
           />
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between font-medium">
-            <span className="text-sm text-foreground">{t("labels.link")}</span>
+            <span className="text-sm text-foreground">{"项目链接"}</span>
           </div>
           <div className="rounded-lg border border-input bg-background/40 p-3">
             <div className="grid gap-3 md:grid-cols-2">
               <label className="block space-y-1.5">
                 <span className="text-xs text-muted-foreground">
-                  {t("labels.link")}
+                  {"项目链接"}
                 </span>
                 <Input
                   type="text"
                   value={project.link || ""}
                   onChange={(e) => handleChange("link", e.target.value)}
-                  placeholder={t("placeholders.link")}
+                  placeholder={"项目链接"}
                 />
               </label>
               <label className="block space-y-1.5">
                 <span className="text-xs text-muted-foreground">
-                  {t("labels.linkLabel")}
+                  {"显示文字"}
                 </span>
                 <Input
                   type="text"
                   value={project.linkLabel || ""}
                   onChange={(e) => handleChange("linkLabel", e.target.value)}
-                  placeholder={t("placeholders.linkLabel")}
+                  placeholder={"显示文字"}
                 />
               </label>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
-              {t("hints.linkLabel")}
+              {"显示文字留空时，将自动显示域名或完整链接。链接仅支持 http:// 或 https:// 链接。"}
             </p>
           </div>
         </div>
         <Field
-          label={t("labels.date")}
+          label={"项目时间"}
           value={project.date}
           onChange={(value) => handleChange("date", value)}
           type="date-range"
-          placeholder={t("placeholders.date")}
+          placeholder={"项目时间范围"}
           showPresentSwitch={true}
         />
         <Field
-          label={t("labels.description")}
+          label={"项目描述"}
           value={project.description}
           onChange={(value) => handleChange("description", value)}
           type="editor"
-          placeholder={t("placeholders.description")}
+          placeholder={"简要描述项目背景和目标"}
         />
       </div>
     </div>

@@ -191,10 +191,17 @@ const buildFontFaceRule = (source: FontSource, resolvedUrl: string) => `@font-fa
 export const normalizeFontFamily = (fontFamily?: string) =>
   findFontDefinition(fontFamily).value;
 
-export const getFontOptions = (t: (key: string) => string) =>
+const FONT_LABELS: Record<string, string> = {
+  alibaba: "阿里巴巴普惠体",
+  misans: "MiSans",
+  notosanssc: "Noto Sans SC",
+  sourcehanserifsc: "思源宋体",
+};
+
+export const getFontOptions = () =>
   FONT_DEFINITIONS.map((definition) => ({
     value: definition.value,
-    label: t(definition.labelKey)
+    label: FONT_LABELS[definition.labelKey] ?? definition.labelKey,
   }));
 
 export const getFontFaceCss = async (

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Folder, Trash2 } from "lucide-react";
-import { useTranslations } from "@/i18n/compat/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,7 +22,6 @@ const SettingsPage = () => {
   const [directoryHandle, setDirectoryHandle] =
     useState<FileSystemDirectoryHandle | null>(null);
   const [folderPath, setFolderPath] = useState<string>("");
-  const t = useTranslations();
   const updateResumeFromFile = useResumeStore(
     (state) => state.updateResumeFromFile
   );
@@ -53,7 +51,7 @@ const SettingsPage = () => {
     try {
       if (!("showDirectoryPicker" in window)) {
         alert(
-          "Your browser does not support directory selection. Please use a modern browser."
+          "您的浏览器不支持选择文件夹。请使用现代浏览器。"
         );
         return;
       }
@@ -90,7 +88,7 @@ const SettingsPage = () => {
       <div className="flex flex-col space-y-8">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            {t("dashboard.settings.title")}
+            设置
           </h2>
         </div>
 
@@ -103,10 +101,10 @@ const SettingsPage = () => {
                 </div>
                 <div className="space-y-1">
                   <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    {t("dashboard.settings.sync.title")}
+                    文件夹同步
                   </CardTitle>
                   <CardDescription className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
-                    {t("dashboard.settings.sync.description")}
+                    选择一个本地文件夹，自动同步简历文件到云端
                   </CardDescription>
                 </div>
               </div>
@@ -123,7 +121,7 @@ const SettingsPage = () => {
                     </div>
                   ) : (
                     <div className="h-12 px-4 flex items-center justify-center sm:justify-start text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-900 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">
-                      {t("dashboard.settings.syncDirectory.noFolderConfigured")}
+                      未配置文件夹
                     </div>
                   )}
                 </div>
@@ -133,7 +131,7 @@ const SettingsPage = () => {
                     variant="default"
                     className="flex-1 sm:flex-none h-12 px-6  text-white shadow-sm hover:shadow transition-all duration-200 rounded-xl font-medium cursor-pointer"
                   >
-                    {t("dashboard.settings.sync.select")}
+                    选择文件夹
                   </Button>
                   {directoryHandle && (
                     <Button
@@ -141,7 +139,7 @@ const SettingsPage = () => {
                       variant="outline"
                       size="icon"
                       className="h-12 w-12 rounded-xl border-gray-200 dark:border-gray-800 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:hover:border-red-900/50 transition-colors"
-                      title="Remove synced directory"
+                      title="移除同步文件夹"
                     >
                       <Trash2 className="h-5 w-5" />
                     </Button>

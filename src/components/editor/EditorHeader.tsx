@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTranslations } from "@/i18n/compat/client";
 import { AlertCircle, ShieldCheck, ShieldAlert, Edit2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "@/lib/navigation";
@@ -35,7 +34,6 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
   const themeConfig = getThemeConfig();
   const { errors, selectError } = useGrammarCheck();
   const router = useRouter();
-  const t = useTranslations();
   const visibleSections = menuSections
     ?.filter((section) => section.enabled)
     .sort((a, b) => a.order - b.order);
@@ -73,7 +71,7 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
               router.push("/app/dashboard");
             }}
           >
-            <span className="text-lg font-semibold">{t("common.title")}</span>
+            <span className="text-lg font-semibold">{"魔方简历"}</span>
           </motion.div>
 
           <span className="text-muted-foreground/30 hidden md:inline-block font-light">/</span>
@@ -113,7 +111,7 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
                     {backupConfigured ? (
                       <>
                         <ShieldCheck className="w-4 h-4" />
-                        <span>{t("previewDock.backup.configured")}</span>
+                        <span>{"已备份"}</span>
                       </>
                     ) : (
                       <>
@@ -125,7 +123,7 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
                           <ShieldAlert className="w-4 h-4" />
                           <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-amber-500" />
                         </motion.div>
-                        <span>{t("previewDock.backup.notConfigured")}</span>
+                        <span>{"未备份"}</span>
                       </>
                     )}
                   </motion.div>
@@ -133,13 +131,13 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
                 <TooltipContent side="bottom" sideOffset={8} className="max-w-[240px]">
                   {backupConfigured ? (
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-xs font-medium">{t("previewDock.backup.configured")}</span>
+                      <span className="text-xs font-medium">{"已备份"}</span>
                       <span className="text-[10px] text-muted-foreground truncate">{backupPath}</span>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-xs font-medium">{t("previewDock.backup.notConfigured")}</span>
-                      <span className="text-[10px] text-muted-foreground">{t("previewDock.backup.clickToConfigure")}</span>
+                      <span className="text-xs font-medium">{"未备份"}</span>
+                      <span className="text-[10px] text-muted-foreground">{"点击前往设置"}</span>
                     </div>
                   )}
                 </TooltipContent>
@@ -157,7 +155,7 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
              >
                   <AlertCircle className="w-4 h-4 text-red-500" />
                   <span className="text-sm text-red-500">
-                    {t("grammarCheck.found_issues", { count: errors.length })}
+                    {`发现 ${errors.length} 个问题`}
                   </span>
              </div>
           )}

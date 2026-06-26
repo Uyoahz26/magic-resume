@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils";
 import { useResumeStore } from "@/store/useResumeStore";
 import { Reorder } from "framer-motion";
 import { ImagePlus } from "lucide-react";
-import { useTranslations } from "@/i18n/compat/client";
 import { Button } from "@/components/ui/button";
 import CertificateItem from "./CertificateItem";
 import { Certificate } from "@/types/resume";
@@ -12,7 +11,6 @@ import { compressImage, estimateBase64Size } from "@/utils/imageUtils";
 import { toast } from "sonner";
 
 const CertificatesPanel = () => {
-    const t = useTranslations("workbench.certificatesPanel");
     const { activeResume, updateCertificatesBatch, addCertificate } = useResumeStore();
     const { certificates = [], activeSection } = activeResume || {};
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,7 +26,7 @@ const CertificatesPanel = () => {
 
     const handleFile = async (file: File) => {
         if (!file.type.startsWith("image/")) {
-            toast.error("Format error"); // Or use i18n
+            toast.error("请上传图片文件");
             return;
         }
         try {
@@ -74,11 +72,11 @@ const CertificatesPanel = () => {
 
     return (
         <div className={cn("space-y-4 px-4 py-4 rounded-lg bg-card border-border")}>
-            <p className="text-sm text-gray-500">{t("tips")}</p>
+            <p className="text-sm text-gray-500">{"支持点击上传或快捷键 (Cmd/Ctrl + V) 直接粘贴图片。拖动滑块可调整宽度实现横向拼接。"}</p>
 
             {certificates.length === 0 && (
                 <div className="py-8 text-center text-sm text-gray-400 border border-dashed rounded-lg">
-                    {t("empty")}
+                    {"暂无图片，请上传或粘贴图片"}
                 </div>
             )}
 
@@ -109,7 +107,7 @@ const CertificatesPanel = () => {
 
                 <Button onClick={() => fileInputRef.current?.click()} className="w-full">
                     <ImagePlus className="w-4 h-4 mr-2" />
-                    {t("addButton")}
+                    {"添加照片或证书"}
                 </Button>
             </Reorder.Group>
         </div>

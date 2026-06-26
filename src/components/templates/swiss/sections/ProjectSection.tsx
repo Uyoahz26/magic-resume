@@ -6,7 +6,6 @@ import SectionWrapper from "../../shared/SectionWrapper";
 import { Project, GlobalSettings } from "@/types/resume";
 import { normalizeRichTextContent } from "@/lib/richText";
 import { formatDateString } from "@/lib/utils";
-import { useLocale } from "@/i18n/compat/client";
 import { getProjectLinkMeta } from "@/lib/projectLink";
 
 interface ProjectSectionProps {
@@ -16,7 +15,7 @@ interface ProjectSectionProps {
 }
 
 const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSettings, showTitle = true }) => {
-    const locale = useLocale();
+    const locale = "zh";
     const visibleProjects = projects?.filter((p) => p.visible);
     const centerSubtitle = globalSettings?.centerSubtitle;
     const themeColor = globalSettings?.themeColor || "#E31C24";

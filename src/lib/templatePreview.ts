@@ -1,8 +1,5 @@
 import { DEFAULT_TEMPLATES } from "@/config";
-import {
-  initialResumeState,
-  initialResumeStateEn,
-} from "@/config/initialResumeData";
+import { initialResumeState } from "@/config/initialResumeData";
 import type { ResumeData } from "@/types/resume";
 import type { ResumeTemplate } from "@/types/template";
 
@@ -12,7 +9,7 @@ export const TEMPLATE_SNAPSHOT_VERSION = 1;
 export const TEMPLATE_SNAPSHOT_ROOT_ATTRIBUTE = "data-template-snapshot-root";
 export const TEMPLATE_SNAPSHOT_ROOT_SELECTOR = `[${TEMPLATE_SNAPSHOT_ROOT_ATTRIBUTE}]`;
 export const TEMPLATE_SNAPSHOT_PUBLIC_DIR = "template-snapshots";
-export const TEMPLATE_PREVIEW_LOCALES = ["zh", "en"] as const;
+export const TEMPLATE_PREVIEW_LOCALES = ["zh"] as const;
 
 export type TemplatePreviewLocale = (typeof TEMPLATE_PREVIEW_LOCALES)[number];
 
@@ -28,21 +25,19 @@ export const createEmptyTemplateSnapshotManifest =
     generatedAt: null,
     locales: {
       zh: {},
-      en: {},
     },
   });
 
 export const isTemplatePreviewLocale = (
   value: string | null | undefined
-): value is TemplatePreviewLocale =>
-  value === "zh" || value === "en";
+): value is TemplatePreviewLocale => value === "zh";
 
 export const getTemplateById = (templateId: string | undefined): ResumeTemplate =>
   DEFAULT_TEMPLATES.find((template) => template.id === templateId) ??
   DEFAULT_TEMPLATES[0];
 
-export const getTemplatePreviewBaseData = (locale: TemplatePreviewLocale) =>
-  locale === "en" ? initialResumeStateEn : initialResumeState;
+export const getTemplatePreviewBaseData = (_locale: TemplatePreviewLocale) =>
+  initialResumeState;
 
 export const createTemplatePreviewData = (
   template: ResumeTemplate,

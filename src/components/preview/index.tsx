@@ -6,7 +6,6 @@ import { DEFAULT_TEMPLATES } from "@/config";
 import { cn } from "@/lib/utils";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useAutoOnePage } from "@/hooks/useAutoOnePage";
-import { useTranslations } from "@/i18n/compat/client";
 import { normalizeFontFamily } from "@/utils/fonts";
 import ResumeTemplateComponent from "../templates";
 
@@ -68,7 +67,6 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
     const selectedFontFamily = normalizeFontFamily(
       activeResume?.globalSettings?.fontFamily
     );
-    const t = useTranslations("previewDock");
     const template = useMemo(() => {
       return (
         DEFAULT_TEMPLATES.find((t) => t.id === activeResume?.templateId) ||
@@ -143,7 +141,7 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
 
     useEffect(() => {
       if (cannotFit) {
-        toast.warning(t("autoOnePage.cannotFit"), {
+        toast.warning("内容较多，已尽量压缩但无法完美一页，建议精简内容, 也可在此基础上调节页边距、字体大小等左侧设置栏选项", {
           duration: 4000,
         });
       }

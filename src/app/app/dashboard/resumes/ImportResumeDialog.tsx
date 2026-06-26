@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslations } from "@/i18n/compat/client";
 import { Braces, Loader2 } from "lucide-react";
 import { PdfIcon } from "@/components/shared/icons/PdfIcon";
 import { cn } from "@/lib/utils";
@@ -31,8 +30,6 @@ export const ImportResumeDialog = ({
   onJsonFileChange,
   onPdfFileChange,
 }: ImportResumeDialogProps) => {
-  const t = useTranslations();
-
   return (
     <>
       <input
@@ -59,7 +56,7 @@ export const ImportResumeDialog = ({
       >
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
-            <DialogTitle>{t("dashboard.resumes.importDialog.title")}</DialogTitle>
+            <DialogTitle>导入简历</DialogTitle>
             <DialogDescription>
             </DialogDescription>
           </DialogHeader>
@@ -81,10 +78,10 @@ export const ImportResumeDialog = ({
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-semibold text-foreground leading-none">
-                  {t("dashboard.resumes.importDialog.jsonTitle")}
+                  导入 JSON
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t("dashboard.resumes.importDialog.jsonDescription")}
+                  从之前导出的 JSON 文件恢复简历
                 </p>
               </div>
             </button>
@@ -105,10 +102,10 @@ export const ImportResumeDialog = ({
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-semibold text-foreground leading-none">
-                  {t("dashboard.resumes.importDialog.pdfTitle")}
+                  导入 PDF
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t("dashboard.resumes.importDialog.pdfDescription")}
+                  从 PDF 文件智能提取简历内容
                 </p>
               </div>
             </button>
@@ -118,7 +115,7 @@ export const ImportResumeDialog = ({
             <DialogFooter className="sm:justify-start">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                {t("dashboard.resumes.importDialog.importing")}
+                导入中...
               </div>
             </DialogFooter>
           )}

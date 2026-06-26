@@ -1,5 +1,3 @@
-
-import { useTranslations } from "@/i18n/compat/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,24 +22,20 @@ const ThemeModal = ({
   onConfirm,
   title,
 }: ThemedAlertDialogProps) => {
-  const t = useTranslations("themeModal.delete");
-
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent onClick={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("title")}</AlertDialogTitle>
+          <AlertDialogTitle>确认删除</AlertDialogTitle>
           <AlertDialogDescription>
             <span>
-              {t.raw("description").split("{title}")[0]}
-              <span className="px-1 font-semibold text-foreground">{title}</span>
-              {t.raw("description").split("{title}")[1]}
+              确定要删除主题 "<span className="px-1 font-semibold text-foreground">{title}</span>" 吗？此操作无法撤销。
             </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>{t("cancelText")}</AlertDialogCancel>
+          <AlertDialogCancel onClick={onClose}>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.stopPropagation();
@@ -49,7 +43,7 @@ const ThemeModal = ({
             }}
             className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-600 border-none"
           >
-            {t("confirmText")}
+            删除
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

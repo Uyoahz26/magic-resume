@@ -10,7 +10,6 @@ import {
   TEMPLATE_SNAPSHOT_ROOT_ATTRIBUTE,
   createTemplatePreviewData,
   getTemplateById,
-  isTemplatePreviewLocale,
 } from "@/lib/templatePreview";
 
 const IframeTemplateViewer = () => {
@@ -19,19 +18,7 @@ const IframeTemplateViewer = () => {
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
       : null;
-  const localeParam = searchParams?.get("locale");
-  const cookieLocale =
-    typeof document !== "undefined"
-      ? document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("NEXT_LOCALE="))
-        ?.split("=")[1]
-      : null;
-  const locale = isTemplatePreviewLocale(localeParam)
-    ? localeParam
-    : isTemplatePreviewLocale(cookieLocale)
-      ? cookieLocale
-      : "zh";
+  const locale = "zh" as const;
   const isSnapshotMode = searchParams?.get("snapshot") === "1";
 
   const template = useMemo(() => {

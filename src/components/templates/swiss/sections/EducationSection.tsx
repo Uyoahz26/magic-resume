@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Education, GlobalSettings } from "@/types/resume";
 import SectionTitle from "./SectionTitle";
 import SectionWrapper from "../../shared/SectionWrapper";
-import { useLocale } from "@/i18n/compat/client";
 import { hasMeaningfulRichTextContent, normalizeRichTextContent } from "@/lib/richText";
 import { formatDateRange } from "@/lib/utils";
 
@@ -14,7 +13,7 @@ interface EducationSectionProps {
 }
 
 const EducationSection = ({ education, globalSettings, showTitle = true }: EducationSectionProps) => {
-    const locale = useLocale();
+    const locale = "zh";
     const visibleEducation = education?.filter((edu) => edu.visible);
     const centerSubtitle = globalSettings?.centerSubtitle;
     const themeColor = globalSettings?.themeColor || "#E31C24";
