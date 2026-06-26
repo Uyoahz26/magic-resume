@@ -30,7 +30,7 @@ function getCosConfig(env: AppEnv) {
   const secretKey = env.TENCENT_COS_SECRET_KEY;
   if (!region || !bucket || !secretId || !secretKey) {
     throw new Error(
-      "[cos] missing config: TENCENT_COS_REGION / TENCENT_COS_BUCKET / TENCENT_COS_SECRET_ID / TENCENT_COS_SECRET_KEY"
+      "[cos] missing config: TENCENT_COS_REGION / TENCENT_COS_BUCKET / TENCENT_COS_SECRET_ID / TENCENT_COS_SECRET_KEY",
     );
   }
   return {
@@ -57,16 +57,13 @@ function toHex(buf: ArrayBuffer): string {
 }
 
 async function sha1Hex(s: string): Promise<string> {
-  const buf = await crypto.subtle.digest(
-    ALGO,
-    new TextEncoder().encode(s)
-  );
+  const buf = await crypto.subtle.digest(ALGO, new TextEncoder().encode(s));
   return toHex(buf);
 }
 
 async function hmacSha1(
   key: ArrayBuffer | string,
-  msg: string
+  msg: string,
 ): Promise<ArrayBuffer> {
   const keyData =
     typeof key === "string"
@@ -77,14 +74,18 @@ async function hmacSha1(
     keyData as BufferSource,
     { name: "HMAC", hash: ALGO },
     false,
-    ["sign"]
+    ["sign"],
   );
-  return crypto.subtle.sign("HMAC", k, new TextEncoder().encode(msg) as BufferSource);
+  return crypto.subtle.sign(
+    "HMAC",
+    k,
+    new TextEncoder().encode(msg) as BufferSource,
+  );
 }
 
 async function hmacSha1Hex(
   key: ArrayBuffer | string,
-  msg: string
+  msg: string,
 ): Promise<string> {
   const buf = await hmacSha1(key, msg);
   return toHex(buf);
@@ -106,7 +107,7 @@ interface SignOpts {
 
 async function signOnce(
   env: AppEnv,
-  opts: SignOpts
+  opts: SignOpts,
 ): Promise<{ authorization: string; keyTime: string }> {
   const cfg = getCosConfig(env);
   const now = Math.floor(Date.now() / 1000);
@@ -174,14 +175,15 @@ async function cosRequest(
     query?: SignOpts["query"];
     headers?: Record<string, string>;
     body?: BodyInit | null;
-  }
+  },
 ): Promise<Response> {
   const cfg = getCosConfig(env);
   // 计算 content-length(若有 body)
   const extraHeaders: Record<string, string> = { ...(init?.headers ?? {}) };
   if (init?.body != null && !extraHeaders["Content-Length"]) {
     let len: number;
-    if (typeof init.body === "string") len = new TextEncoder().encode(init.body).length;
+    if (typeof init.body === "string")
+      len = new TextEncoder().encode(init.body).length;
     else if (init.body instanceof ArrayBuffer) len = init.body.byteLength;
     else if (init.body instanceof Uint8Array) len = init.body.byteLength;
     else len = 0;
@@ -198,7 +200,10 @@ async function cosRequest(
     ? "?" +
       Object.entries(init.query)
         .filter(([, v]) => v !== undefined && v !== null)
-        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+        .map(
+          ([k, v]) =>
+            `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`,
+        )
         .join("&")
     : "";
   return fetch(url + qs, {
@@ -216,15 +221,15 @@ async function cosRequest(
 // =========================
 
 export function resumeKey(userId: string, resumeId: string): string {
-  return `users/${userId}/resumes/${resumeId}.json`;
+  return `resume-data/${userId}/${resumeId}.json`;
 }
 
 /** 列举用户所有简历的 COS Key */
 export async function listResumes(
   env: AppEnv,
-  userId: string
+  userId: string,
 ): Promise<string[]> {
-  const prefix = `users/${userId}/resumes/`;
+  const prefix = `resume-data/${userId}/`;
   const res = await cosRequest(env, "GET", "/", {
     query: { prefix, "max-keys": 1000 },
   });
@@ -245,7 +250,7 @@ export async function listResumes(
 export async function getResume(
   env: AppEnv,
   userId: string,
-  resumeId: string
+  resumeId: string,
 ): Promise<unknown | null> {
   const key = resumeKey(userId, resumeId);
   const res = await cosRequest(env, "GET", `/${key}`);
@@ -262,7 +267,7 @@ export async function putResume(
   env: AppEnv,
   userId: string,
   resumeId: string,
-  data: unknown
+  data: unknown,
 ): Promise<void> {
   const key = resumeKey(userId, resumeId);
   const body = JSON.stringify(data);
@@ -282,7 +287,7 @@ export async function putResume(
 export async function deleteResume(
   env: AppEnv,
   userId: string,
-  resumeId: string
+  resumeId: string,
 ): Promise<void> {
   const key = resumeKey(userId, resumeId);
   const res = await cosRequest(env, "DELETE", `/${key}`);
