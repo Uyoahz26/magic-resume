@@ -71,7 +71,7 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
               router.push("/app/dashboard");
             }}
           >
-            <span className="text-lg font-semibold">{"魔方简历"}</span>
+            <span className="text-lg font-semibold">{"RESUME"}</span>
           </motion.div>
 
           <span className="text-muted-foreground/30 hidden md:inline-block font-light">/</span>
@@ -149,15 +149,15 @@ export function EditorHeader({ isMobile }: EditorHeaderProps) {
         <div className="flex items-center space-x-3">
           <GrammarCheckDrawer />
           {errors.length > 0 && (
-             <div 
-                className="flex items-center space-x-1 cursor-pointer animate-pulse"
-                onClick={() => document.dispatchEvent(new CustomEvent('open-grammar-drawer'))}
-             >
-                  <AlertCircle className="w-4 h-4 text-red-500" />
-                  <span className="text-sm text-red-500">
-                    {`发现 ${errors.length} 个问题`}
-                  </span>
-             </div>
+            <div
+              className="flex items-center space-x-1 cursor-pointer animate-pulse"
+              onClick={() => document.dispatchEvent(new CustomEvent('open-grammar-drawer'))}
+            >
+              <AlertCircle className="w-4 h-4 text-red-500" />
+              <span className="text-sm text-red-500">
+                {`发现 ${errors.length} 个问题`}
+              </span>
+            </div>
           )}
 
           <ThemeToggle></ThemeToggle>

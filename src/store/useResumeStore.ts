@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { StateStorage } from "zustand/middleware";
 import { getFileHandle, verifyPermission } from "@/utils/fileSystem";
+import { saveResumeToCloud, deleteResumeFromCloud } from "@/hooks/useResumeCloudSync";
 import {
   BasicInfo,
   Education,
@@ -225,6 +226,18 @@ const debouncedSyncToFile = (
   }, 1500);
 };
 
+// 云端同步：与本地文件系统同步时机相同，1.5秒防抖
+let cloudSyncTimer: ReturnType<typeof setTimeout> | null = null;
+const debouncedSyncToCloud = (resumeData: ResumeData) => {
+  if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(() => {
+    saveResumeToCloud(resumeData).catch((error) => {
+      console.warn("[cloud sync] failed:", error);
+    });
+    cloudSyncTimer = null;
+  }, 1500);
+};
+
 export const useResumeStore = create(
   persist<ResumeStore, [], [], PersistedResumeStore>(
     (set, get) => ({
@@ -259,6 +272,7 @@ export const useResumeStore = create(
         }));
 
         syncResumeToFile(newResume);
+        debouncedSyncToCloud(newResume);
 
         return id;
       },
@@ -275,6 +289,7 @@ export const useResumeStore = create(
           };
 
           debouncedSyncToFile(updatedResume, resume);
+          debouncedSyncToCloud(updatedResume);
 
           return {
             resumes: {
@@ -346,6 +361,11 @@ export const useResumeStore = create(
             console.error("Error deleting resume file:", error);
           }
         })();
+
+        // 云端删除
+        deleteResumeFromCloud(resumeId).catch((error) => {
+          console.warn("[cloud delete] failed:", error);
+        });
       },
 
       duplicateResume: (resumeId) => {
@@ -413,6 +433,7 @@ export const useResumeStore = create(
         const updatedResume = get().activeResume;
         if (updatedResume) {
           debouncedSyncToFile(updatedResume, prevResume || undefined);
+          debouncedSyncToCloud(updatedResume);
         }
       },
 
@@ -780,6 +801,7 @@ export const useResumeStore = create(
         });
 
         debouncedSyncToFile(updatedResume);
+        debouncedSyncToCloud(updatedResume);
       },
       addResume: (resume: ResumeData) => {
         set((state) => ({
@@ -792,6 +814,7 @@ export const useResumeStore = create(
         }));
 
         syncResumeToFile(resume);
+        debouncedSyncToCloud(resume);
         return resume.id;
       },
     }),

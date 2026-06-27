@@ -1,13 +1,23 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Palette, Eye } from "lucide-react";
+import { FileText, Palette, Eye, User, Zap, Briefcase, Rocket, GraduationCap, MessageCircle, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useResumeStore } from "@/store/useResumeStore";
 import { EditPanel } from "@/components/editor/EditPanel";
 import { SidePanel } from "@/components/editor/SidePanel";
 import PreviewPanel from "@/components/preview";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
+// 简历模块图标映射
+const MODULE_ICONS: Record<string, React.ReactNode> = {
+  "⚡": <Zap className="h-4 w-4" />,
+  "💼": <Briefcase className="h-4 w-4" />,
+  "🚀": <Rocket className="h-4 w-4" />,
+  "🎓": <GraduationCap className="h-4 w-4" />,
+  "💬": <MessageCircle className="h-4 w-4" />,
+  "🏆": <Trophy className="h-4 w-4" />,
+};
 
 type TabType = "content" | "style" | "preview";
 
@@ -68,7 +78,7 @@ export function MobileWorkbench() {
                           : "bg-background text-muted-foreground border-border hover:bg-muted"
                       )}
                     >
-                      <span className="mr-1.5">👤</span>
+                      <User className="h-4 w-4 mr-1.5" />
                       基本信息
                     </button>
                     
@@ -86,7 +96,7 @@ export function MobileWorkbench() {
                               : "bg-background text-muted-foreground border-border hover:bg-muted"
                           )}
                         >
-                          <span className="mr-1.5">{section.icon}</span>
+                          <span className="mr-1.5">{MODULE_ICONS[section.icon] || section.icon}</span>
                           {section.title}
                         </button>
                       ))}

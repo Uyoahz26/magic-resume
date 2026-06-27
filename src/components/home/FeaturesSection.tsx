@@ -1,4 +1,4 @@
-import { Sparkles, Layout, Cloud } from "lucide-react";
+import { Sparkles, Layout, FileJson } from "lucide-react";
 import Image from "@/lib/image";
 
 interface Feature {
@@ -28,12 +28,12 @@ const features: Feature[] = [
     imageAlt: "简历模板",
   },
   {
-    icon: Cloud,
-    badge: "云端",
-    title: "云端同步,随时随地",
-    description: "登录账号,简历自动同步到云端。多设备无缝切换,数据安全有保障。",
+    icon: FileJson,
+    badge: "导入",
+    title: "JSON 导入导出",
+    description: "支持 JSON 格式导入导出,轻松迁移数据。简历数据完全属于你。",
     image: "/features/sync.png",
-    imageAlt: "云端同步",
+    imageAlt: "数据导出",
   },
 ];
 

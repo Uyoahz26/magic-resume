@@ -9,7 +9,7 @@ export default function CTASection() {
           现在就开始<br />你的下一份简历
         </h2>
         <p className="mt-6 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          30 秒注册,立即使用全部基础功能。
+          立即注册,开始制作你的下一份简历。
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button asChild size="lg" className="h-12 px-8 text-base">

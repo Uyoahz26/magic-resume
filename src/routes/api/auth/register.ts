@@ -22,7 +22,7 @@ export const Route = createFileRoute("/api/auth/register")({
           return Response.json({ error: "invalid_json" }, { status: 400 });
         }
 
-        const { email, password, name } = body ?? {};
+        const { email, password, name, inviteCode } = body ?? {};
         if (!validateEmail(email)) {
           return Response.json({ error: "invalid_email" }, { status: 400 });
         }
@@ -30,6 +30,14 @@ export const Route = createFileRoute("/api/auth/register")({
           return Response.json(
             { error: "invalid_password", message: "密码至少 8 位" },
             { status: 400 }
+          );
+        }
+        // 验证邀请码
+        const inviteCodeFromEnv = env.INVITE_CODE;
+        if (inviteCodeFromEnv && inviteCode !== inviteCodeFromEnv) {
+          return Response.json(
+            { error: "invalid_invite_code" },
+            { status: 403 }
           );
         }
 

@@ -57,6 +57,7 @@ export interface AppEnv {
   TENCENT_COS_SECRET_ID?: string;
   TENCENT_COS_SECRET_KEY?: string;
   AI_MONTHLY_LIMIT?: string;
+  INVITE_CODE?: string;
 }
 
 /** 生成一个 uuid-like 的随机字符串(用作 user_id / resume_id) */

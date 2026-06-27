@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import appCss from "../app/globals.css?url";
 import tiptapCss from "../styles/tiptap.scss?url";
+import sonnerCss from "sonner/dist/styles.css?url";
 import { Providers } from "@/app/providers";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -24,6 +25,7 @@ export const Route = createRootRoute({
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: tiptapCss },
+      { rel: "stylesheet", href: sonnerCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),

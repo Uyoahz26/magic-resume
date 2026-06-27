@@ -16,7 +16,7 @@ export default function HeroSection() {
         </h1>
 
         <p className="mt-8 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
-          极简、克制、可云端同步。<br className="hidden md:inline" />
+          极简、克制、无广告。<br className="hidden md:inline" />
           一键 AI 润色、多模板导出,让好简历不再难产。
         </p>
 

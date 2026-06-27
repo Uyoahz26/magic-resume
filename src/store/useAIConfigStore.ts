@@ -51,7 +51,8 @@ export const useAIConfigStore = create<AIConfigState>()(
       setGeminiModelId: (modelId: string) => set({ geminiModelId: modelId }),
       isConfigured: () => {
         const state = get();
-        const config = AI_MODEL_CONFIGS[state.selectedModel];
+        const config = AI_MODEL_CONFIGS[state.selectedModel as AIModelType];
+        if (!config) return false;
         return config.validate(state);
       }
     }),
