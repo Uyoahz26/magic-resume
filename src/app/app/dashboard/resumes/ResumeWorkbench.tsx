@@ -186,7 +186,7 @@ export const ResumeWorkbench = () => {
     const importResumeFromPdf = async (file: File) => {
         if (!geminiApiKey || !geminiModelId) {
             toast.error("请先配置 Gemini AI 设置");
-            router.push("/app/dashboard/ai");
+            router.push("/app/dashboard/settings");
             return;
         }
 

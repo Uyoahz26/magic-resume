@@ -11,7 +11,8 @@ import {
   FileJson,
   Loader2,
   Eye,
-  FileText
+  FileText,
+  MessageSquare
 } from "lucide-react";
 import { RiMarkdownLine } from "@remixicon/react";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ import { AI_MODEL_CONFIGS } from "@/config/ai";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useAIConfiguration } from "@/hooks/useAIConfiguration";
 import { FAQDialog } from "./FAQDialog";
+import { AIChatDialog } from "@/components/editor/ai/AIChatDialog";
 import PdfExport from "@/components/shared/PdfExport";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
@@ -63,7 +65,7 @@ const MagicThread = ({ height = 40 }: { height?: number }) => (
   <div className="relative flex flex-col items-center" style={{ height }}>
     {/* Base dashed line */}
     <div className="absolute inset-y-0 w-[1px] border-l border-dashed border-primary/30" />
-    
+
     {/* Traveling pulse */}
     <motion.div
       className="absolute top-0 w-[1px] h-4 bg-gradient-to-b from-transparent via-primary to-transparent"
@@ -106,6 +108,14 @@ const PreviewDock = ({
   const { globalSettings = {} } = activeResume || {};
 
   const { checkConfiguration } = useAIConfiguration();
+  const [showChat, setShowChat] = useState(false);
+
+  // 获取简历文本用于 AI 对话
+  const getResumeText = useCallback(() => {
+    const previewContent = resumeContentRef.current || document.getElementById("resume-preview");
+    if (!previewContent) return undefined;
+    return previewContent.innerText?.trim() || undefined;
+  }, [resumeContentRef]);
 
   // ... (keep other hooks)
 
@@ -213,6 +223,25 @@ const PreviewDock = ({
                       className={cn(
                         "flex cursor-pointer h-7 w-7 items-center justify-center rounded-lg",
                         "hover:bg-gray-100/50 dark:hover:bg-neutral-800/50",
+                        "transition-all duration-200"
+                      )}
+                      onClick={() => setShowChat(true)}
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" sideOffset={10}>
+                    <p>AI 助手</p>
+                  </TooltipContent>
+                </Tooltip>
+              </DockIcon>
+              <DockIcon>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      className={cn(
+                        "flex cursor-pointer h-7 w-7 items-center justify-center rounded-lg",
+                        "hover:bg-gray-100/50 dark:hover:bg-neutral-800/50",
                         "transition-all duration-200",
                         globalSettings?.autoOnePage && [
                           "bg-primary text-primary-foreground",
@@ -281,7 +310,7 @@ const PreviewDock = ({
                   <TooltipTrigger asChild>
                     <button
                       onClick={toggleSidePanel}
-                       className={cn(
+                      className={cn(
                         "flex h-[30px] w-[30px] items-center justify-center rounded-sm transition-all",
                         "hover:bg-gray-100/50 dark:hover:bg-neutral-800/50",
                         "active:scale-95",
@@ -358,7 +387,7 @@ const PreviewDock = ({
                 </Tooltip>
               </DockIcon>
               <div className="w-full h-[1px] bg-gray-200" />
- 
+
               <DockIcon>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -377,7 +406,7 @@ const PreviewDock = ({
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
-              <DockIcon>
+              {/* <DockIcon>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
@@ -395,17 +424,23 @@ const PreviewDock = ({
                     <p>{"GitHub"}</p>
                   </TooltipContent>
                 </Tooltip>
-              </DockIcon>
+              </DockIcon> */}
             </div>
           </Dock>
         </TooltipProvider>
 
         <MagicThread height={60} />
-        
+
         <div className="w-[56px] flex justify-center">
           <FAQDialog />
         </div>
       </div>
+
+      <AIChatDialog
+        open={showChat}
+        onOpenChange={setShowChat}
+        resumeText={getResumeText()}
+      />
     </>
   );
 };
