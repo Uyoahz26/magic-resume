@@ -14,11 +14,11 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Magic Resume · 云端简历编辑器" },
+      { title: "Resume · 简历编辑器" },
       {
         name: "description",
         content:
-          "极简、可云端同步的简历编辑器。一键 AI 润色、多模板导出,让好简历不再难产。",
+          "极简的简历编辑器。一键 AI 润色、多模板导出,让好简历不再难产。",
       },
     ],
     links: [

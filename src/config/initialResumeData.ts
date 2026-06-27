@@ -16,11 +16,11 @@ const initialGlobalSettings: GlobalSettings = {
 export const initialResumeState = {
   title: "新建简历",
   basic: {
-    name: "宋哈娜",
-    title: "高级前端工程师",
+    name: "哈吉米",
+    title: "高级搬砖工程师",
     employementStatus: "离职",
     email: "zhangsan@example.com",
-    phone: "13800138000",
+    phone: "13888888888",
     location: "北京市朝阳区",
     birthDate: "2025-01",
     fieldOrder: DEFAULT_FIELD_ORDER,

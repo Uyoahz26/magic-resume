@@ -19,7 +19,7 @@ const Logo: React.FC<LogoProps> = ({
   size = 24,
   className = "",
   onClick,
-  ariaLabel = "Magic Resume",
+  ariaLabel = "Resume",
 }) => {
   return (
     <svg

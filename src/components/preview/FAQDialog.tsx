@@ -33,7 +33,7 @@ const DynamicHelpIcon = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttr
     >
       {/* Ambient Glow - Uses theme primary color */}
       <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl group-hover:bg-primary/30 transition-all duration-700 animate-[pulse_4s_ease-in-out_infinite]" />
-      
+
       {/* Glass Container */}
       <div className="absolute inset-0 rounded-full bg-background/40 dark:bg-zinc-900/40 backdrop-blur-md border border-primary/20 group-hover:border-primary/50 transition-colors duration-500 shadow-lg" />
 
@@ -149,10 +149,10 @@ export const FAQDialog = () => {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
               <HelpCircle className="h-5 w-5" />
             </div>
-             {"常见问题 (FAQ)"}
+            {"常见问题 (FAQ)"}
           </DialogTitle>
           <DialogDescription>
-            {"关于 Magic Resume 工作台的一些常用技巧和解答。"}
+            {"关于 Resume 工作台的一些常用技巧和解答。"}
           </DialogDescription>
         </DialogHeader>
 

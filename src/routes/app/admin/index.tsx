@@ -59,7 +59,7 @@ function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-medium tracking-tight">总览</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Magic Resume · 管理后台
+          Resume · 管理后台
         </p>
       </div>
 

@@ -145,7 +145,7 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
           duration: 4000,
         });
       }
-    }, [cannotFit, t]);
+    }, [cannotFit]);
 
     const { contentPerPagePx, pageBreakCount } = useMemo(() => {
       const MM_TO_PX = 3.78;

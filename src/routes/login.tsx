@@ -59,17 +59,17 @@ function LoginPage() {
       <section className="hidden md:flex flex-col justify-between p-12 border-r border-border">
         <div className="flex items-center gap-3">
           <Logo size={32} className="text-foreground" />
-          <span className="text-xl font-medium tracking-tight">Magic Resume</span>
+          <span className="text-xl font-medium tracking-tight">Resume</span>
         </div>
         <div>
           <h1 className="text-5xl font-serif font-medium tracking-tight leading-tight text-foreground">
             开启你的<br />下一份简历
           </h1>
           <p className="mt-6 text-base text-muted-foreground max-w-md leading-relaxed">
-            极简、克制、可云端同步。登录后可在多设备访问你的简历数据。
+            极简、好用。
           </p>
         </div>
-        <p className="text-xs text-muted-foreground">© 2026 Magic Resume</p>
+        <p className="text-xs text-muted-foreground">© 2026 Resume</p>
       </section>
 
       {/* 右:表单 */}
@@ -80,7 +80,7 @@ function LoginPage() {
         >
           <div className="md:hidden flex items-center gap-2 mb-8">
             <Logo size={28} className="text-foreground" />
-            <span className="text-lg font-medium">Magic Resume</span>
+            <span className="text-lg font-medium">Resume</span>
           </div>
 
           <div>

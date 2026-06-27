@@ -79,7 +79,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               />
               {open && (
                 <span className="text-sm font-medium tracking-tight">
-                  Magic Resume
+                  Resume
                 </span>
               )}
             </div>
@@ -98,11 +98,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                               <SidebarMenuButton
                                 asChild
                                 isActive={active}
-                                className={`w-full transition-colors h-9 [&>svg]:size-auto ${
-                                  active
+                                className={`w-full transition-colors h-9 [&>svg]:size-auto ${active
                                     ? "bg-foreground text-background font-medium"
                                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                                }`}
+                                  }`}
                               >
                                 <div
                                   className="flex items-center gap-2 px-2 cursor-pointer"

@@ -7,7 +7,7 @@ export default function HeroSection() {
     <section className="relative pt-40 pb-24">
       <div className="mx-auto max-w-[1100px] px-6 text-center">
         <span className="inline-block text-xs tracking-widest text-muted-foreground mb-6 uppercase">
-          Magic Resume · 云端简历编辑器
+          Resume · 简历编辑器
         </span>
 
         <h1 className="text-5xl md:text-7xl font-medium tracking-tight leading-[1.05] text-foreground">
@@ -37,7 +37,7 @@ export default function HeroSection() {
         <div className="rounded-lg overflow-hidden border border-border bg-card">
           <Image
             src="/web-shot.png"
-            alt="Magic Resume 编辑器预览"
+            alt="Resume 编辑器预览"
             width={1200}
             height={800}
             className="w-full h-auto"

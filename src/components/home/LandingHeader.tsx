@@ -40,7 +40,7 @@ export default function LandingHeader() {
             >
               <Logo size={28} className="text-foreground" />
               <span className="text-base font-medium tracking-tight text-foreground">
-                Magic Resume
+                Resume
               </span>
             </a>
 

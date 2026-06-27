@@ -74,7 +74,7 @@ function RegisterPage() {
       <section className="hidden md:flex flex-col justify-between p-12 border-r border-border">
         <div className="flex items-center gap-3">
           <Logo size={32} className="text-foreground" />
-          <span className="text-xl font-medium tracking-tight">Magic Resume</span>
+          <span className="text-xl font-medium tracking-tight">Resume</span>
         </div>
         <div>
           <h1 className="text-5xl font-serif font-medium tracking-tight leading-tight text-foreground">
@@ -84,7 +84,7 @@ function RegisterPage() {
             注册即可在多设备同步简历,享受 AI 润色、多模板导出等服务。
           </p>
         </div>
-        <p className="text-xs text-muted-foreground">© 2026 Magic Resume</p>
+        <p className="text-xs text-muted-foreground">© 2026 Resume</p>
       </section>
 
       {/* 右:表单 */}
@@ -95,7 +95,7 @@ function RegisterPage() {
         >
           <div className="md:hidden flex items-center gap-2 mb-8">
             <Logo size={28} className="text-foreground" />
-            <span className="text-lg font-medium">Magic Resume</span>
+            <span className="text-lg font-medium">Resume</span>
           </div>
 
           <div>

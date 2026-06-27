@@ -132,7 +132,7 @@ const PreviewDock = ({
     } catch (error) {
       toast.error("语法检查失败，请重试");
     }
-  }, [resumeContentRef, checkConfiguration, checkGrammar, t]);
+  }, [resumeContentRef, checkConfiguration, checkGrammar]);
 
   const handleGoGitHub = () => {
     window.open(GITHUB_REPO_URL, "_blank");
@@ -155,7 +155,7 @@ const PreviewDock = ({
     } catch (error) {
       toast.error("简历复制失败");
     }
-  }, [activeResumeId, duplicateResume, router, setActiveResume, t]);
+  }, [activeResumeId, duplicateResume, router, setActiveResume]);
 
   return (
     <>
