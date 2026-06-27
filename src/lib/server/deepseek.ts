@@ -8,7 +8,7 @@
 
 import type { AppEnv } from "./db";
 
-const API_URL = "https://api.deepseek.com/v1/chat/completions";
+const API_URL = "https://api.deepseek.com/chat/completions";
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -20,7 +20,7 @@ function getConfig(env: AppEnv) {
   const model = env.DEEPSEEK_MODEL ?? "deepseek-chat";
   if (!apiKey) {
     throw new Error(
-      "[deepseek] DEEPSEEK_API_KEY 未设置,请用 wrangler secret put DEEPSEEK_API_KEY 注入"
+      "[deepseek] DEEPSEEK_API_KEY 未设置,请用 wrangler secret put DEEPSEEK_API_KEY 注入",
     );
   }
   return { apiKey, model };
@@ -30,7 +30,7 @@ function getConfig(env: AppEnv) {
 export async function deepseekStream(
   env: AppEnv,
   messages: ChatMessage[],
-  opts?: { temperature?: number }
+  opts?: { temperature?: number },
 ): Promise<ReadableStream<Uint8Array>> {
   const { apiKey, model } = getConfig(env);
   const res = await fetch(API_URL, {
@@ -57,7 +57,7 @@ export async function deepseekStream(
 export async function deepseekJson(
   env: AppEnv,
   messages: ChatMessage[],
-  opts?: { temperature?: number }
+  opts?: { temperature?: number },
 ): Promise<unknown> {
   const { apiKey, model } = getConfig(env);
   const res = await fetch(API_URL, {
