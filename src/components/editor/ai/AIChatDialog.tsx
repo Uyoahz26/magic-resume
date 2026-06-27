@@ -111,7 +111,7 @@ export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogPro
         : selectedModel === "openai" ? openaiApiKey
         : geminiApiKey;
 
-      const modelId = selectedModel === "deepseek" ? "deepseek-chat"
+      const modelId = selectedModel === "deepseek" ? "deepseek-v4-flash"
         : selectedModel === "doubao" ? doubaoModelId || "doubao-pro-32k"
         : selectedModel === "openai" ? openaiModelId || "gpt-4o-mini"
         : geminiModelId || "gemini-flash-latest";

@@ -29,7 +29,7 @@ interface AIConfigState {
 export const useAIConfigStore = create<AIConfigState>()(
   persist(
     (set, get) => ({
-      selectedModel: "doubao",
+      selectedModel: "deepseek",
       doubaoApiKey: "",
       doubaoModelId: "",
       deepseekApiKey: "",
@@ -53,7 +53,15 @@ export const useAIConfigStore = create<AIConfigState>()(
         const state = get();
         const config = AI_MODEL_CONFIGS[state.selectedModel as AIModelType];
         if (!config) return false;
-        return config.validate(state);
+        const apiKey = state.selectedModel === "deepseek" ? state.deepseekApiKey
+          : state.selectedModel === "doubao" ? state.doubaoApiKey
+          : state.selectedModel === "openai" ? state.openaiApiKey
+          : state.geminiApiKey;
+        const modelId = state.selectedModel === "deepseek" ? state.deepseekModelId
+          : state.selectedModel === "doubao" ? state.doubaoModelId
+          : state.selectedModel === "openai" ? state.openaiModelId
+          : state.geminiModelId;
+        return config.validate({ apiKey, modelId });
       }
     }),
     {

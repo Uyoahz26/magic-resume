@@ -53,10 +53,18 @@ export const Route = createFileRoute("/api/ai/chat")({
           return Response.json({ error: "invalid_messages" }, { status: 400 });
         }
 
+        // DeepSeek: 优先使用服务端环境变量,其次客户端配置
+        const effectiveApiKey = (model === "deepseek" && env.DEEPSEEK_API_KEY)
+          ? env.DEEPSEEK_API_KEY
+          : apiKey;
+        const effectiveModelId = (model === "deepseek" && env.DEEPSEEK_MODEL)
+          ? env.DEEPSEEK_MODEL
+          : modelId;
+
         // 构建请求
         const provider = AI_ENDPOINTS[model] || AI_ENDPOINTS.deepseek;
         const endpoint = model === "openai" && apiEndpoint ? apiEndpoint : provider.url;
-        const headers = provider.headers ? provider.headers(apiKey) : {};
+        const headers = provider.headers ? provider.headers(effectiveApiKey) : {};
 
         try {
           if (model === "gemini") {
@@ -107,7 +115,7 @@ export const Route = createFileRoute("/api/ai/chat")({
               method: "POST",
               headers,
               body: JSON.stringify({
-                model: modelId || "deepseek-chat",
+                model: effectiveModelId || "deepseek-v4-flash",
                 messages,
                 temperature: 0.7,
                 max_tokens: 2048,

@@ -69,7 +69,7 @@ export const Route = createFileRoute("/api/grammar")({
           await incrementQuota(env, user.id);
           await logAiCall(env, user.id, {
             kind: "grammar",
-            model: env.DEEPSEEK_MODEL ?? "deepseek-chat",
+            model: env.DEEPSEEK_MODEL ?? "deepseek-v4-flash",
             durationMs: Date.now() - start,
             status: "ok",
           });
@@ -84,7 +84,7 @@ export const Route = createFileRoute("/api/grammar")({
         } catch (e: any) {
           await logAiCall(env, user.id, {
             kind: "grammar",
-            model: env.DEEPSEEK_MODEL ?? "deepseek-chat",
+            model: env.DEEPSEEK_MODEL ?? "deepseek-v4-flash",
             durationMs: Date.now() - start,
             status: "error",
             errorMsg: String(e?.message ?? e).slice(0, 200),

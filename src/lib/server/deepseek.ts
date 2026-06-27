@@ -3,7 +3,7 @@
  *
  * 配置:
  *   env.DEEPSEEK_API_KEY   (wrangler secret put DEEPSEEK_API_KEY)
- *   env.DEEPSEEK_MODEL     (默认 "deepseek-chat")
+ *   env.DEEPSEEK_MODEL     (默认 "deepseek-v4-flash")
  */
 
 import type { AppEnv } from "./db";
@@ -17,7 +17,7 @@ export interface ChatMessage {
 
 function getConfig(env: AppEnv) {
   const apiKey = env.DEEPSEEK_API_KEY;
-  const model = env.DEEPSEEK_MODEL ?? "deepseek-chat";
+  const model = env.DEEPSEEK_MODEL ?? "deepseek-v4-flash";
   if (!apiKey) {
     throw new Error(
       "[deepseek] DEEPSEEK_API_KEY 未设置,请用 wrangler secret put DEEPSEEK_API_KEY 注入",

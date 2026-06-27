@@ -64,7 +64,7 @@ export const Route = createFileRoute("/api/polish")({
           await incrementQuota(env, user.id);
           await logAiCall(env, user.id, {
             kind: "polish",
-            model: env.DEEPSEEK_MODEL ?? "deepseek-chat",
+            model: env.DEEPSEEK_MODEL ?? "deepseek-v4-flash",
             durationMs: Date.now() - start,
             status: "ok",
           });
@@ -78,7 +78,7 @@ export const Route = createFileRoute("/api/polish")({
         } catch (e: any) {
           await logAiCall(env, user.id, {
             kind: "polish",
-            model: env.DEEPSEEK_MODEL ?? "deepseek-chat",
+            model: env.DEEPSEEK_MODEL ?? "deepseek-v4-flash",
             durationMs: Date.now() - start,
             status: "error",
             errorMsg: String(e?.message ?? e).slice(0, 200),

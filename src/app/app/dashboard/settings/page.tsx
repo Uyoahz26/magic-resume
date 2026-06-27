@@ -30,7 +30,7 @@ import { useAIConfigStore } from "@/store/useAIConfigStore";
 import { toast } from "sonner";
 
 const AI_PROVIDERS = [
-  { id: "deepseek", name: "DeepSeek", models: ["deepseek-chat"] },
+  { id: "deepseek", name: "DeepSeek", models: ["deepseek-v4-flash"] },
   { id: "doubao", name: "豆包 (Doubao)", models: ["doubao-pro-32k", "doubao-lite-32k"] },
   { id: "openai", name: "OpenAI", models: ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"] },
   { id: "gemini", name: "Google Gemini", models: ["gemini-flash-latest", "gemini-pro"] },
