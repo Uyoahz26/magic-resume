@@ -346,7 +346,7 @@ export const ResumeWorkbench = () => {
                         我的简历
                     </h1>
                     <div className="flex items-center space-x-2">
-                        <AnimatedImportButton onClick={() => setIsImportDialogOpen(true)} t={t} />
+                        <AnimatedImportButton onClick={() => setIsImportDialogOpen(true)} />
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -414,7 +414,6 @@ export const ResumeWorkbench = () => {
                                         key={id}
                                         id={id}
                                         resume={resume}
-                                        t={t}
                                         locale={locale}
                                         setActiveResume={setActiveResume}
                                         router={router}
