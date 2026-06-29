@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Resume · 云端简历编辑器",
+  title: "Resume · 简历编辑器",
 };
 
 export default function LocaleLayout({ children }: Props) {

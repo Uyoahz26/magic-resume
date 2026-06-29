@@ -99,8 +99,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                                 asChild
                                 isActive={active}
                                 className={`w-full transition-colors h-9 [&>svg]:size-auto ${active
-                                    ? "bg-foreground text-background font-medium"
-                                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                  ? "bg-foreground text-background font-medium"
+                                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
                                   }`}
                               >
                                 <div
@@ -137,7 +137,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="flex items-center justify-between gap-2">
               {open && (
                 <span className="text-xs text-muted-foreground truncate">
-                  云端同步已开启
+                  本地同步已开启
                 </span>
               )}
               <UserMenu />
