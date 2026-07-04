@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { requireUser } from "@/lib/server/auth";
 
 const AI_ENDPOINTS: Record<string, { url: string; headers?: (key: string) => Record<string, string> }> = {
   deepseek: {
@@ -43,20 +42,6 @@ export const Route = createFileRoute("/api/ai/test")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Auth check
-        try {
-          const authHeader = request.headers.get("Authorization");
-          if (!authHeader) {
-            // For test endpoint, we may not have full auth - just check content-type
-            const contentType = request.headers.get("Content-Type");
-            if (!contentType?.includes("application/json")) {
-              return Response.json({ error: "invalid_request" }, { status: 400 });
-            }
-          }
-        } catch {
-          // Continue with test even if auth fails
-        }
-
         let body: any;
         try {
           body = await request.json();

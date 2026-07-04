@@ -1,16 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X,
   Send,
   Loader2,
-  MessageSquare,
   Sparkles,
   User,
   Bot,
   RotateCcw,
   Copy,
-  Check
+  Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -28,9 +26,8 @@ interface Message {
 }
 
 interface AIChatDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   resumeText?: string;
+  className?: string;
 }
 
 const SYSTEM_PROMPT = `你是一个专业的简历助手。用户会给你发送简历内容，请根据简历内容回答用户的问题。
@@ -44,7 +41,7 @@ const SYSTEM_PROMPT = `你是一个专业的简历助手。用户会给你发送
 
 请用专业、友好的语气回答。如果用户的问题与简历无关，可以提醒用户先粘贴简历内容。`;
 
-export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogProps) {
+export function AIChatDialog({ resumeText, className }: AIChatDialogProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +63,7 @@ export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogPro
   } = useAIConfigStore();
 
   useEffect(() => {
-    if (open && messages.length === 0) {
+    if (messages.length === 0) {
       // 欢迎消息
       setMessages([
         {
@@ -79,7 +76,8 @@ export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogPro
         },
       ]);
     }
-  }, [open, messages.length, resumeText]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -116,9 +114,13 @@ export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogPro
         : selectedModel === "openai" ? openaiModelId || "gpt-4o-mini"
         : geminiModelId || "gemini-flash-latest";
 
-      // 构建上下文
-      const contextContent = resumeText
-        ? `用户的简历内容：\n${resumeText}\n\n用户的问题：${userMessage.content}`
+      // 构建上下文 - 优先使用 prop 传入的 resumeText,否则从 DOM 中提取
+      const extractedText = resumeText
+        || (typeof document !== "undefined"
+          ? (document.getElementById("resume-preview")?.innerText?.trim() || undefined)
+          : undefined);
+      const contextContent = extractedText
+        ? `用户的简历内容：\n${extractedText}\n\n用户的问题：${userMessage.content}`
         : userMessage.content;
 
       const response = await fetch("/api/ai/chat", {
@@ -138,7 +140,7 @@ export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogPro
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || "请求失败");
+        throw new Error(errorData.error?.message || errorData.message || "请求失败");
       }
 
       const data = await response.json();
@@ -174,173 +176,142 @@ export function AIChatDialog({ open, onOpenChange, resumeText }: AIChatDialogPro
   };
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-          onClick={() => onOpenChange(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="w-full max-w-2xl h-[70vh] bg-background rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                  <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-foreground">AI 简历助手</h2>
-                  <p className="text-xs text-muted-foreground">基于简历内容智能问答</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleReset}
-                  title="重新开始"
+    <div className={cn("flex flex-col h-full min-h-0", className)}>
+      {/* Messages */}
+      <ScrollArea className="flex-1 min-h-0" ref={scrollRef}>
+        <div className="space-y-3 p-2">
+          <AnimatePresence initial={false}>
+            {messages.map((message) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={cn(
+                  "flex gap-2",
+                  message.role === "user" && "flex-row-reverse"
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                  )}
                 >
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onOpenChange(false)}
+                  {message.role === "user" ? (
+                    <User className="w-3 h-3" />
+                  ) : (
+                    <Bot className="w-3 h-3" />
+                  )}
+                </div>
+                <div
+                  className={cn(
+                    "flex-1 min-w-0 max-w-[85%] rounded-xl px-3 py-2",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  )}
                 >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <p className="text-xs whitespace-pre-wrap leading-relaxed break-words">
+                    {message.content}
+                  </p>
+                  <div
                     className={cn(
-                      "flex gap-3",
+                      "flex items-center gap-1 mt-1",
                       message.role === "user" && "flex-row-reverse"
                     )}
                   >
-                    <div
-                      className={cn(
-                        "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                      )}
-                    >
-                      {message.role === "user" ? (
-                        <User className="w-4 h-4" />
-                      ) : (
-                        <Bot className="w-4 h-4" />
-                      )}
-                    </div>
-                    <div
-                      className={cn(
-                        "flex-1 max-w-[80%] rounded-2xl px-4 py-3",
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      )}
-                    >
-                      <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                        {message.content}
-                      </p>
-                      <div
-                        className={cn(
-                          "flex items-center gap-2 mt-2",
-                          message.role === "user" && "flex-row-reverse"
-                        )}
+                    <span className="text-[10px] opacity-50">
+                      {message.timestamp.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    {message.role === "assistant" && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5"
+                        onClick={() => handleCopy(message.id, message.content)}
                       >
-                        <span className="text-xs opacity-50">
-                          {message.timestamp.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                        {message.role === "assistant" && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => handleCopy(message.id, message.content)}
-                          >
-                            {copiedId === message.id ? (
-                              <Check className="w-3 h-3" />
-                            ) : (
-                              <Copy className="w-3 h-3" />
-                            )}
-                          </Button>
+                        {copiedId === message.id ? (
+                          <Check className="w-2.5 h-2.5" />
+                        ) : (
+                          <Copy className="w-2.5 h-2.5" />
                         )}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex gap-3"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                      <Bot className="w-4 h-4" />
-                    </div>
-                    <div className="bg-muted rounded-2xl px-4 py-3">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        思考中…
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            </ScrollArea>
-
-            {/* Input */}
-            <div className="p-4 border-t border-border">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSend();
-                }}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+            {isLoading && (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
                 className="flex gap-2"
               >
-                <Input
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="输入你的问题…"
-                  disabled={isLoading}
-                  className="flex-1 h-11"
-                />
-                <Button type="submit" size="default" disabled={isLoading || !input.trim()}>
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                </Button>
-              </form>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                AI 助手基于简历内容回答问题，帮助优化简历制作
-              </p>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <Bot className="w-3 h-3" />
+                </div>
+                <div className="bg-muted rounded-xl px-3 py-2">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    思考中…
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </ScrollArea>
+
+      {/* Input */}
+      <div className="p-2 border-t border-border">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSend();
+          }}
+          className="flex gap-1.5"
+        >
+          <Input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="输入你的问题…"
+            disabled={isLoading}
+            className="flex-1 h-8 text-sm"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            className="h-8 w-8"
+            disabled={isLoading || !input.trim()}
+          >
+            {isLoading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Send className="w-3.5 h-3.5" />
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handleReset}
+            title="重新开始"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </Button>
+        </form>
+        <p className="text-[10px] text-muted-foreground mt-1 text-center">
+          AI 助手基于简历内容回答问题
+        </p>
+      </div>
+    </div>
   );
 }

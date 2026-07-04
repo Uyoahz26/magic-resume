@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   Edit2,
   PanelRightClose,
@@ -12,7 +12,6 @@ import {
   Loader2,
   Eye,
   FileText,
-  MessageSquare
 } from "lucide-react";
 import { RiMarkdownLine } from "@remixicon/react";
 import { toast } from "sonner";
@@ -35,7 +34,6 @@ import { AI_MODEL_CONFIGS } from "@/config/ai";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useAIConfiguration } from "@/hooks/useAIConfiguration";
 import { FAQDialog } from "./FAQDialog";
-import { AIChatDialog } from "@/components/editor/ai/AIChatDialog";
 import PdfExport from "@/components/shared/PdfExport";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
@@ -108,9 +106,8 @@ const PreviewDock = ({
   const { globalSettings = {} } = activeResume || {};
 
   const { checkConfiguration } = useAIConfiguration();
-  const [showChat, setShowChat] = useState(false);
 
-  // 获取简历文本用于 AI 对话
+  // 获取简历文本用于 AI 语法检查
   const getResumeText = useCallback(() => {
     const previewContent = resumeContentRef.current || document.getElementById("resume-preview");
     if (!previewContent) return undefined;
@@ -213,25 +210,6 @@ const PreviewDock = ({
                         ? "检查中..."
                         : "AI语法纠错"}
                     </p>
-                  </TooltipContent>
-                </Tooltip>
-              </DockIcon>
-              <DockIcon>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div
-                      className={cn(
-                        "flex cursor-pointer h-7 w-7 items-center justify-center rounded-lg",
-                        "hover:bg-gray-100/50 dark:hover:bg-neutral-800/50",
-                        "transition-all duration-200"
-                      )}
-                      onClick={() => setShowChat(true)}
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" sideOffset={10}>
-                    <p>AI 助手</p>
                   </TooltipContent>
                 </Tooltip>
               </DockIcon>
@@ -435,14 +413,9 @@ const PreviewDock = ({
           <FAQDialog />
         </div>
       </div>
-
-      <AIChatDialog
-        open={showChat}
-        onOpenChange={setShowChat}
-        resumeText={getResumeText()}
-      />
     </>
   );
 };
 
 export default PreviewDock;
+

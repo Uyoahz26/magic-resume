@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { requireUser } from "@/lib/server/auth";
-import { requireEnv } from "@/lib/server/env";
-import { deepseekJson } from "@/lib/server/deepseek";
+import { getEnv } from "@/lib/server/env";
 
 const AI_ENDPOINTS: Record<string, { url: string; headers?: (key: string) => Record<string, string> }> = {
   deepseek: {
@@ -37,8 +35,7 @@ export const Route = createFileRoute("/api/ai/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const env = requireEnv();
-        const user = await requireUser(env, request);
+        const env = getEnv();
 
         let body: any;
         try {

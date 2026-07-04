@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { Layout, Type, SpaceIcon, Palette, Zap } from "lucide-react";
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Layout, Type, SpaceIcon, Palette, Zap, Sparkles, MessageSquare, ChevronDown } from "lucide-react";
 import debounce from "lodash/debounce";
 import {
   Select,
@@ -29,6 +29,8 @@ import { STANDARD_MODULES } from "@/config/modules";
 import { SECTION_LABELS } from "@/config/labels";
 import { DEFAULT_TEMPLATES } from "@/config";
 import { getFontOptions, normalizeFontFamily } from "@/utils/fonts";
+import { AIChatDialog } from "@/components/editor/ai/AIChatDialog";
+import { Button } from "@/components/ui/button";
 
 const lineHeightOptions = [
   { value: "normal", label: "默认" },
@@ -70,10 +72,70 @@ function SettingCard({
   );
 }
 
+function AIChatCard({ resumeText }: { resumeText?: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Card
+      className={cn(
+        "border shadow-sm",
+        "bg-card border-border shadow-sm"
+      )}
+    >
+      <CardHeader
+        className="p-4 pb-0 flex flex-row items-center justify-between space-y-0 cursor-pointer select-none"
+        onClick={() => setExpanded((v) => !v)}
+      >
+        <CardTitle className="flex items-center gap-2 text-base font-medium">
+          <Sparkles className={cn("w-4 h-4 text-muted-foreground")} />
+          <span className={cn("text-foreground")}>{"AI 助手"}</span>
+        </CardTitle>
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpanded((v) => !v);
+            }}
+            title={expanded ? "收起" : "展开"}
+          >
+            <ChevronDown
+              className={cn(
+                "w-4 h-4 transition-transform",
+                expanded && "rotate-180"
+              )}
+            />
+          </Button>
+        </div>
+      </CardHeader>
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="ai-chat-content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 480, opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <CardContent className="p-2 h-[480px]">
+              <AIChatDialog resumeText={resumeText} />
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Card>
+  );
+}
+
 export function SidePanel({
   onSectionCreated,
+  resumeText,
 }: {
   onSectionCreated?: () => void;
+  resumeText?: string;
 } = {}) {
   const {
     activeResume,
@@ -232,6 +294,9 @@ export function SidePanel({
             </Popover>
           </div>
         </SettingCard>
+
+        {/* AI 助手 */}
+        <AIChatCard resumeText={resumeText} />
 
         {/* 主题色设置  */}
         <SettingCard

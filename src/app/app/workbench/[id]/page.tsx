@@ -173,6 +173,13 @@ export default function Home() {
   // For now we pass null to satisfy the prop requirement
   const resumeContentRef = React.useRef<HTMLDivElement>(null);
 
+  // 提取简历文本传给 SidePanel 的 AI 助手
+  const getResumeText = React.useCallback(() => {
+    if (typeof document === "undefined") return undefined;
+    const el = resumeContentRef.current || document.getElementById("resume-preview");
+    return el?.innerText?.trim() || undefined;
+  }, []);
+
   const toggleSidePanel = () => {
     setSidePanelCollapsed(!sidePanelCollapsed);
   };
@@ -311,7 +318,7 @@ export default function Home() {
                   className="bg-background"
                 >
                   <div className="h-full overflow-y-auto">
-                    <SidePanel />
+                    <SidePanel resumeText={getResumeText()} />
                   </div>
                 </ResizablePanel>
                 <DragHandle />
