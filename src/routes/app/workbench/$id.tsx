@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import WorkbenchPage from "@/app/app/workbench/[id]/page";
 import { useResumeStore } from "@/store/useResumeStore";
+import { useAutoSyncToCloud } from "@/hooks/useResumeCloudSync";
 
 export const Route = createFileRoute("/app/workbench/$id")({
   head: () => ({
@@ -18,6 +19,8 @@ function WorkbenchRoutePage() {
   useEffect(() => {
     setActiveResume(id);
   }, [id, setActiveResume]);
+
+  useEffect(() => useAutoSyncToCloud(), []);
 
   return <WorkbenchPage />;
 }

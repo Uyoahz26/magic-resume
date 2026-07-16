@@ -8,7 +8,10 @@ export const useAIConfiguration = () => {
   const { isConfigured, selectedModel } = useAIConfigStore();
 
   const checkConfiguration = () => {
-    if (!isConfigured()) {
+    // DeepSeek can be configured server-side with DEEPSEEK_API_KEY. The
+    // browser must not block that request merely because local storage has no
+    // copy of the secret.
+    if (selectedModel !== "deepseek" && !isConfigured()) {
       toast.error(
         <>
           <span>{"请先配置 ApiKey 和 模型Id"}</span>

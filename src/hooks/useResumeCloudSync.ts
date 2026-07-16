@@ -20,6 +20,12 @@ export interface CloudResumeItem {
   data: ResumeData;
 }
 
+function resumeUpdatedAt(resume?: ResumeData): number {
+  if (!resume?.updatedAt) return 0;
+  const value = new Date(resume.updatedAt).getTime();
+  return Number.isFinite(value) ? value : 0;
+}
+
 export async function hydrateFromCloud(): Promise<{
   ok: boolean;
   count: number;
@@ -36,16 +42,23 @@ export async function hydrateFromCloud(): Promise<{
     const json = (await res.json()) as { items: CloudResumeItem[] };
     const items = json.items ?? [];
 
-    const resumes: Record<string, ResumeData> = {};
+    const store = useResumeStore.getState();
+    const resumes: Record<string, ResumeData> = { ...store.resumes };
+    const shouldUpload = new Set(Object.keys(store.resumes));
     let firstId: string | null = null;
     for (const it of items) {
       if (!it.data || typeof it.data !== "object") continue;
-      resumes[it.id] = it.data;
+      const local = store.resumes[it.id];
+      if (!local || resumeUpdatedAt(it.data) >= resumeUpdatedAt(local)) {
+        resumes[it.id] = it.data;
+        shouldUpload.delete(it.id);
+      }
       if (!firstId) firstId = it.id;
     }
+    if (!firstId) firstId = Object.keys(resumes)[0] ?? null;
 
-    const store = useResumeStore.getState();
-    // 用现有 setState 模式:替换 resumes 但保留其他字段
+    // Merge instead of replacing local data. A new/empty bucket must never
+    // erase resumes that were created locally before login or while offline.
     useResumeStore.setState((s) => ({
       resumes,
       activeResumeId: s.activeResumeId ?? firstId,
@@ -55,6 +68,14 @@ export async function hydrateFromCloud(): Promise<{
           ? resumes[firstId]
           : null,
     }));
+
+    // Push local-only or newer local copies after hydration.
+    await Promise.all(
+      [...shouldUpload].map(async (id) => {
+        const resume = resumes[id];
+        if (resume) await saveResumeToCloud(resume);
+      })
+    );
 
     return { ok: true, count: items.length };
   } catch (e: any) {
@@ -78,7 +99,11 @@ export async function saveResumeToCloud(
       }),
     });
     if (!res.ok) {
-      return { ok: false, error: `HTTP ${res.status}` };
+      const json = await res.json().catch(() => null) as { error?: string; message?: string } | null;
+      return {
+        ok: false,
+        error: json?.message || json?.error || `HTTP ${res.status}`,
+      };
     }
     const json = (await res.json()) as { ok: boolean; updatedAt?: number };
     return { ok: !!json.ok, updatedAt: json.updatedAt };

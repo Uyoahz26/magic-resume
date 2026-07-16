@@ -231,9 +231,11 @@ let cloudSyncTimer: ReturnType<typeof setTimeout> | null = null;
 const debouncedSyncToCloud = (resumeData: ResumeData) => {
   if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
   cloudSyncTimer = setTimeout(() => {
-    saveResumeToCloud(resumeData).catch((error) => {
-      console.warn("[cloud sync] failed:", error);
-    });
+    saveResumeToCloud(resumeData)
+      .then((result) => {
+        if (!result.ok) console.warn("[cloud sync] failed:", result.error);
+      })
+      .catch((error) => console.warn("[cloud sync] failed:", error));
     cloudSyncTimer = null;
   }, 1500);
 };
@@ -391,6 +393,9 @@ export const useResumeStore = create(
           activeResumeId: newId,
           activeResume: duplicatedResume,
         }));
+
+        syncResumeToFile(duplicatedResume);
+        debouncedSyncToCloud(duplicatedResume);
 
         return newId;
       },

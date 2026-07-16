@@ -31,6 +31,16 @@ const AI_ENDPOINTS: Record<string, { url: string; headers?: (key: string) => Rec
   },
 };
 
+function normalizeOpenAIEndpoint(value?: unknown): string {
+  const raw = typeof value === "string" && value.trim()
+    ? value.trim()
+    : "https://api.openai.com/v1";
+  const endpoint = raw.replace(/\/+$/, "");
+  return endpoint.endsWith("/chat/completions")
+    ? endpoint
+    : `${endpoint}/chat/completions`;
+}
+
 export const Route = createFileRoute("/api/ai/chat")({
   server: {
     handlers: {
@@ -53,14 +63,23 @@ export const Route = createFileRoute("/api/ai/chat")({
         // DeepSeek: 优先使用服务端环境变量,其次客户端配置
         const effectiveApiKey = (model === "deepseek" && env.DEEPSEEK_API_KEY)
           ? env.DEEPSEEK_API_KEY
-          : apiKey;
+          : typeof apiKey === "string" ? apiKey.trim() : "";
         const effectiveModelId = (model === "deepseek" && env.DEEPSEEK_MODEL)
           ? env.DEEPSEEK_MODEL
-          : modelId;
+          : typeof modelId === "string" && modelId.trim() ? modelId.trim() : "deepseek-chat";
+
+        if (!AI_ENDPOINTS[model]) {
+          return Response.json({ error: "invalid_model" }, { status: 400 });
+        }
+        if (!effectiveApiKey) {
+          return Response.json({ error: "missing_api_key", message: "未配置 AI API Key" }, { status: 400 });
+        }
 
         // 构建请求
         const provider = AI_ENDPOINTS[model] || AI_ENDPOINTS.deepseek;
-        const endpoint = model === "openai" && apiEndpoint ? apiEndpoint : provider.url;
+        const endpoint = model === "openai"
+          ? normalizeOpenAIEndpoint(apiEndpoint)
+          : provider.url;
         const headers = provider.headers ? provider.headers(effectiveApiKey) : {};
 
         try {
@@ -75,7 +94,7 @@ export const Route = createFileRoute("/api/ai/chat")({
               }));
 
             const geminiResponse = await fetch(
-              `${provider.url}/${geminiModel}:generateContent?key=${apiKey}`,
+              `${provider.url}/${geminiModel}:generateContent?key=${encodeURIComponent(effectiveApiKey)}`,
               {
                 method: "POST",
                 headers: {

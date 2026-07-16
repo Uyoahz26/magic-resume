@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { getEnv } from "@/lib/server/env";
 
 const AI_ENDPOINTS: Record<string, { url: string; headers?: (key: string) => Record<string, string> }> = {
   deepseek: {
@@ -32,11 +33,21 @@ const AI_ENDPOINTS: Record<string, { url: string; headers?: (key: string) => Rec
 
 // Test models for each provider
 const TEST_MODEL_IDS: Record<string, string> = {
-  deepseek: "deepseek-v4-flash",
+  deepseek: "deepseek-chat",
   doubao: "doubao-pro-32k",
   openai: "gpt-4o-mini",
   gemini: "gemini-flash-latest",
 };
+
+function normalizeOpenAIEndpoint(value?: unknown): string {
+  const raw = typeof value === "string" && value.trim()
+    ? value.trim()
+    : "https://api.openai.com/v1";
+  const endpoint = raw.replace(/\/+$/, "");
+  return endpoint.endsWith("/chat/completions")
+    ? endpoint
+    : `${endpoint}/chat/completions`;
+}
 
 export const Route = createFileRoute("/api/ai/test")({
   server: {
@@ -50,8 +61,12 @@ export const Route = createFileRoute("/api/ai/test")({
         }
 
         const { model, apiKey, modelId, apiEndpoint } = body ?? {};
+        const env = getEnv();
+        const effectiveApiKey = model === "deepseek" && env.DEEPSEEK_API_KEY
+          ? env.DEEPSEEK_API_KEY
+          : typeof apiKey === "string" ? apiKey.trim() : "";
 
-        if (!model || !apiKey) {
+        if (!model || !effectiveApiKey) {
           return Response.json({ error: "missing_params" }, { status: 400 });
         }
 
@@ -60,14 +75,16 @@ export const Route = createFileRoute("/api/ai/test")({
           return Response.json({ error: "invalid_model" }, { status: 400 });
         }
 
-        const endpoint = model === "openai" && apiEndpoint ? apiEndpoint : provider.url;
-        const headers = provider.headers ? provider.headers(apiKey) : {};
-        const testModelId = modelId || TEST_MODEL_IDS[model] || "deepseek-v4-flash";
+        const endpoint = model === "openai" ? normalizeOpenAIEndpoint(apiEndpoint) : provider.url;
+        const headers = provider.headers ? provider.headers(effectiveApiKey) : {};
+        const testModelId = model === "deepseek"
+          ? env.DEEPSEEK_MODEL || modelId || TEST_MODEL_IDS[model]
+          : modelId || TEST_MODEL_IDS[model] || "deepseek-chat";
 
         try {
           if (model === "gemini") {
             const testResponse = await fetch(
-              `${provider.url}/${testModelId}:generateContent?key=${apiKey}`,
+              `${provider.url}/${testModelId}:generateContent?key=${encodeURIComponent(effectiveApiKey)}`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

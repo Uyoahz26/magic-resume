@@ -21,7 +21,7 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import Logo from "@/components/shared/Logo";
-import { hydrateFromCloud } from "@/hooks/useResumeCloudSync";
+import { hydrateFromCloud, useAutoSyncToCloud } from "@/hooks/useResumeCloudSync";
 import { UserMenu } from "@/components/auth/UserMenu";
 
 interface MenuItem {
@@ -58,7 +58,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   // 登录后从云端 hydrate 简历
   useEffect(() => {
-    void hydrateFromCloud();
+    let cancelled = false;
+    let cleanup = () => {};
+    void hydrateFromCloud().finally(() => {
+      if (!cancelled) cleanup = useAutoSyncToCloud();
+    });
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
   }, []);
 
   return (

@@ -113,10 +113,13 @@ createServer(async (req, res) => {
     }
 
     const request = new Request(url, init);
-    // Ensure globalThis.env exists for requireEnv() compatibility
-    // In Workers, env is patched from fetch arguments by postbuild script
-    // In Node.js, we just ensure the global exists (empty is fine since no D1 here)
-    globalThis.env = globalThis.env ?? {};
+    // TanStack's handlers read bindings from globalThis.env. Keep the Node
+    // runtime environment available there too; the Worker build replaces this
+    // object with per-request bindings.
+    globalThis.env = {
+      ...(globalThis.env || {}),
+      ...process.env,
+    };
     const response = await serverEntry.fetch(request);
 
     res.statusCode = response.status;

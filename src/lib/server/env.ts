@@ -43,8 +43,12 @@ function tryProcess(): AnyEnv | null {
 }
 
 export function getEnv(): AnyEnv {
-  if (globalThis.__mr_env__) return globalThis.__mr_env__;
-  const env = tryGlobalThis() ?? tryProcess() ?? {};
+  // An empty globalThis.env (used by the Node server) must not hide
+  // variables supplied through process.env. Worker bindings win on conflicts.
+  const env = {
+    ...(tryProcess() ?? {}),
+    ...(tryGlobalThis() ?? {}),
+  };
   globalThis.__mr_env__ = env;
   return env;
 }

@@ -109,7 +109,7 @@ export function AIChatDialog({ resumeText, className }: AIChatDialogProps) {
         : selectedModel === "openai" ? openaiApiKey
         : geminiApiKey;
 
-      const modelId = selectedModel === "deepseek" ? "deepseek-v4-flash"
+      const modelId = selectedModel === "deepseek" ? "deepseek-chat"
         : selectedModel === "doubao" ? doubaoModelId || "doubao-pro-32k"
         : selectedModel === "openai" ? openaiModelId || "gpt-4o-mini"
         : geminiModelId || "gemini-flash-latest";
